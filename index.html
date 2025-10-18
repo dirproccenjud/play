@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>DRS Play — Quiz Treinamento</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#6b7280;
+      --primary:#003B8E;
+      --accent:#00B3FF;
+      --glass: rgba(255,255,255,0.7);
+      --success:#16a34a;
+      --danger:#ef4444;
+      --radius:14px;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Roboto,Arial;background:linear-gradient(180deg,var(--primary)10%,#0f3b7a50 40%,var(--bg)100%);color:var(--text)}
+    .container{max-width:1100px;margin:28px auto;padding:18px}
+    .hero{
+      display:flex;gap:18px;align-items:center;justify-content:space-between;
+      background:linear-gradient(135deg,rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-radius:20px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.12);backdrop-filter: blur(6px);
+    }
+    .brand{color:#fff}
+    .brand h1{margin:0;font-weight:800;font-size:22px;letter-spacing:-0.5px}
+    .brand p{margin:4px 0 0;color:#e6f0ff}
+    .roles{display:flex;gap:12px}
+    .role-btn{
+      background:linear-gradient(90deg,#fff,#f8fbff);border-radius:12px;padding:12px 18px;border:0;cursor:pointer;min-width:180px;
+      display:flex;gap:12px;align-items:center;box-shadow:0 6px 18px rgba(3,16,70,0.14);transition:transform .18s, box-shadow .18s;
+    }
+    .role-btn .icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(180deg,var(--accent),#3fd0ff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+    .role-btn:hover{transform:translateY(-6px);box-shadow:0 18px 30px rgba(3,16,70,0.18)}
+    .stage{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:18px}
+    .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 8px 24px rgba(2,6,23,0.08)}
+    .input{display:block;width:100%;padding:10px;border-radius:10px;border:1px solid #e8eef9}
+    .small{font-size:13px;color:var(--muted)}
+    .btn-primary{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;border-radius:10px;padding:10px 12px;border:0;cursor:pointer;font-weight:700;box-shadow:0 8px 18px rgba(0,59,142,0.12)}
+    .btn-ghost{background:transparent;border:1px solid #eef4ff;border-radius:10px;padding:10px 12px;cursor:pointer}
+    .host-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .status-pill{padding:8px;border-radius:10px;background:#f3f8ff;color:var(--primary);font-weight:700}
+    .leaderboard-title{display:flex;justify-content:space-between;align-items:center}
+    .leaderboard-list{margin-top:12px}
+    .lead-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);margin-bottom:8px;border:1px solid #eef4ff;transition:transform .2s}
+    .lead-item.top{background:linear-gradient(90deg,#fff8e8,#fff)}
+    .medal{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800}
+    .medal.gold{background:linear-gradient(180deg,#ffd966,#ffc400);color:#6b4800}
+    .medal.silver{background:linear-gradient(180deg,#e6e6e6,#d5d5d5);color:#444}
+    .medal.bronze{background:linear-gradient(180deg,#f7d7c2,#f3b58b);color:#6b3b10}
+    .game-hero{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .question{font-weight:800;font-size:20px}
+    .progress{height:10px;background:#eef5ff;border-radius:999px;overflow:hidden;margin-top:10px}
+    .progress > span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--accent),#59e0ff);transform-origin:left;transition:width 0.3s linear}
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    .option-btn{padding:14px;border-radius:12px;border:1px solid #eef4ff;background:linear-gradient(180deg,#fff,#f7fbff);font-weight:800;cursor:pointer;transition:transform .12s,box-shadow .12s}
+    .option-btn:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(3,16,70,0.06)}
+    .option-btn.correct{background:linear-gradient(90deg,#ecfdf5,#bbf7d0);border-color:#bbf7d0}
+    .option-btn.wrong{background:linear-gradient(90deg,#fff0f0,#ffd6d6);border-color:#ffd6d6}
+    .feedback{margin-top:12px;padding:10px;border-radius:10px;font-weight:800;text-align:center}
+    .feedback.good{background:#ecfdf5;color:var(--success);border-left:4px solid var(--success)}
+    .feedback.bad{background:#fff0f0;color:var(--danger);border-left:4px solid var(--danger)}
+    .hidden{display:none}
+    @media(max-width:980px){
+      .stage{grid-template-columns:1fr; padding-bottom:12px}
+      .hero{flex-direction:column;align-items:flex-start;gap:12px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="brand">
+        <h1>DRS Play</h1>
+        <p>Quiz institucional — rápido, responsivo e moderno</p>
+      </div>
+      <div class="roles">
+        <button id="cardOrganizer" class="role-btn" title="Organizador">
+          <div class="icon">O</div>
+          <div>
+            <div style="font-weight:800">Organizador</div>
+            <div class="small">Crie sala e conduza</div>
+          </div>
+        </button>
+        <button id="cardPlayer" class="role-btn" title="Jogador">
+          <div class="icon">J</div>
+          <div>
+            <div style="font-weight:800">Jogador</div>
+            <div class="small">Participe e responda</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage" style="display:none">
+      <div class="card" id="leftCard"></div>
+
+      <div class="card" id="rightCard">
+        <div class="leaderboard-title">
+          <div style="font-weight:800">Ranking — Tempo real</div>
+          <div class="small" id="playerCount">0 jogadores</div>
+        </div>
+        <div class="leaderboard-list" id="organizerLeaderboard">
+          <div class="small">Nenhum jogador ainda</div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="small">Ranking final</div>
+          <div id="finalRanking" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Templates -->
+    <template id="organizerTemplate">
+      <div>
+        <h2 style="margin:0 0 8px 0">Painel do Organizador</h2>
+        <div class="small">Configure a sala e conduza o quiz</div>
+        <div style="margin-top:12px">
+          <label class="small">Seu nome</label>
+          <input id="organizerName" class="input" placeholder="Ex: João">
+          <label class="small" style="margin-top:8px;display:block">Nome da sala</label>
+          <input id="roomName" class="input" placeholder="Ex: TREINAMENTO_A">
+          <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+            <button id="createRoomBtn" class="btn-primary">Criar / Entrar</button>
+            <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" class="hidden">
+            <button id="loadDefaultBtn" class="btn-ghost">Carregar perguntas</button>
+            <button id="importBtn" class="btn-ghost" title="Importar .xlsx ou .csv">Importar arquivo</button>
+          </div>
+
+          <div id="quizControls" style="margin-top:16px;display:none">
+            <div class="host-grid">
+              <div class="status-pill" id="statusLabel">Aguardando</div>
+              <div style="text-align:right"><button id="restartQuizBtn" class="btn-ghost">Reiniciar Quiz</button></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+              <button id="startBtn" class="btn-primary">Iniciar</button>
+              <button id="prevBtn" class="btn-ghost">Anterior</button>
+              <button id="nextBtn" class="btn-primary">Próxima</button>
+              <button id="endBtn" class="btn-ghost">Encerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="playerTemplate">
+      <div>
+        <h2 style="margin:0 0 8px 0">Entrar como Jogador</h2>
+        <label class="small">Seu nome</label>
+        <input id="playerName" class="input" placeholder="Ex: Maria">
+        <label class="small" style="margin-top:8px;display:block">Sala</label>
+        <input id="playerRoom" class="input" placeholder="Ex: TREINAMENTO_A">
+        <div style="margin-top:10px">
+          <button id="joinRoomBtn" class="btn-primary">Entrar</button>
+        </div>
+      </div>
+    </template>
+
+    <template id="gameTemplate">
+      <div>
+        <div class="game-hero">
+          <div>
+            <div class="small" id="qIndex">Pergunta —</div>
+            <div id="youName" style="font-weight:900">—</div>
+          </div>
+          <div style="text-align:center">
+            <div id="timer" class="small status-pill">Tempo: --s</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div id="questionText" class="question">Aguardando início...</div>
+          <div class="progress" aria-hidden="true"><span id="progressBar" style="width:100%"></span></div>
+          <div class="options" id="optionsArea"></div>
+          <div id="feedbackArea" class="feedback hidden"></div>
+        </div>
+      </div>
+    </template>
+
+  </div>
+
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <!-- SheetJS for Excel/CSV import -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    // Firebase config (mantive o seu - ajuste se for preciso)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJmHP0hkqc9ry36UWDuns614ebWWO8xe0",
+      authDomain: "quiz-treinamento-2025.firebaseapp.com",
+      databaseURL: "https://quiz-treinamento-2025-default-rtdb.firebaseio.com",
+      projectId: "quiz-treinamento-2025"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // helpers
+    const $ = id => document.getElementById(id);
+    const create = (s) => document.createElement(s);
+
+    // sample official questions (fallback)
+    const OFFICIAL_QUESTIONS = [
+      {"q":"É correto o uso da expressão: “Certifico que encaminhei, via SIGE, o presente processo para que o alvará seja cumprido pelo suporte do núcleo.”","options":["a) Correto","b) Incorreto"],"answer":1,"time":20},
+      {"q":"É correto o uso da expressão: “Certifico que decorreu o prazo legal/concedido em despacho, sem que a parte requerida se manifestasse nos autos.”","options":["a) Correto","b) Incorreto"],"answer":0,"time":20},
+      {"q":"É correto o uso da expressão: “Certifico que deixo de expedir o competente alvará por ter sido apresentada a petição ID XXX, onde o patrono apresenta pedido para pagamento a herdeiros.”","options":["a) Correto","b) Incorreto"],"answer":0,"time":20}
+      // ... mantenha ou adicione conforme deseja
+    ];
+
+    const POSITIVE=["🎉 Muito bem!","👏 Você mandou bem!","🔥 Excelente!"];
+    const NEGATIVE=["😅 Não foi dessa vez!","🙃 Quase!","💡 Tente de novo!"];
+
+    // state
+    const state = { role:null, name:null, room:null, uid:null };
+    let localTimer = null;
+    const scheduled = {};
+
+    // base elements
+    const cardOrganizer = $('cardOrganizer');
+    const cardPlayer = $('cardPlayer');
+    const stage = $('stage');
+    const leftCard = $('leftCard');
+    const organizerLeaderboard = $('organizerLeaderboard');
+
+    cardOrganizer.addEventListener('click', ()=> openOrganizer());
+    cardPlayer.addEventListener('click', ()=> openPlayer());
+
+    function openOrganizer(){
+      stage.style.display = 'grid';
+      leftCard.innerHTML = '';
+      const tpl = document.getElementById('organizerTemplate').content.cloneNode(true);
+      leftCard.appendChild(tpl);
+      bindOrganizer();
+    }
+
+    function openPlayer(){
+      stage.style.display = 'grid';
+      leftCard.innerHTML = '';
+      const tpl = document.getElementById('playerTemplate').content.cloneNode(true);
+      leftCard.appendChild(tpl);
+      bindPlayer();
+    }
+
+    function openGameUI(){
+      leftCard.innerHTML = '';
+      const tpl = document.getElementById('gameTemplate').content.cloneNode(true);
+      leftCard.appendChild(tpl);
+    }
+
+    // Organizer
+    function bindOrganizer(){
+      const createBtn = leftCard.querySelector('#createRoomBtn');
+      const loadBtn = leftCard.querySelector('#loadDefaultBtn');
+      const importBtn = leftCard.querySelector('#importBtn');
+      const fileInput = leftCard.querySelector('#fileInput');
+      const startBtn = leftCard.querySelector('#startBtn');
+      const prevBtn = leftCard.querySelector('#prevBtn');
+      const nextBtn = leftCard.querySelector('#nextBtn');
+      const endBtn = leftCard.querySelector('#endBtn');
+      const restartQuizBtn = leftCard.querySelector('#restartQuizBtn');
+      const statusLabel = leftCard.querySelector('#statusLabel');
+
+      createBtn.addEventListener('click', async ()=>{
+        const name = leftCard.querySelector('#organizerName').value.trim();
+        const room = leftCard.querySelector('#roomName').value.trim().toUpperCase();
+        if(!name||!room) return alert('Preencha nome e sala.');
+        state.role='organizer'; state.name=name; state.room=room; state.uid = genUid(name);
+
+        // check existing room
+        const existsSnap = await db.ref(`rooms/${room}/meta`).get();
+        if(existsSnap.exists()){
+          const ok = confirm(`A sala "${room}" já existe. Deseja entrar na sala existente? (OK = sim)`);
+          if(!ok) return;
+        }
+
+        await db.ref(`rooms/${room}/meta`).set({ host:name, createdAt: firebase.database.ServerValue.TIMESTAMP });
+        leftCard.querySelector('#quizControls').style.display = 'block';
+        statusLabel.innerText = `Sala ${room} criada/ativa`;
+        attachRoom(room);
+        alert('Sala pronta!');
+      });
+
+      loadBtn.addEventListener('click', async ()=>{
+        if(!state.room) return alert('Crie a sala primeiro.');
+        // escrever OFFICIAL_QUESTIONS no banco
+        await db.ref(`rooms/${state.room}/questions`).set(OFFICIAL_QUESTIONS);
+        alert('Perguntas padrão carregadas!');
+      });
+
+      importBtn.addEventListener('click', ()=> fileInput.click());
+      fileInput.addEventListener('change', async (e)=>{
+        const f = e.target.files[0];
+        if(!f) return;
+        try{
+          const arr = await f.arrayBuffer();
+          const wb = XLSX.read(arr, {type:'array'});
+          // assumimos primeira sheet
+          const wsName = wb.SheetNames[0];
+          const ws = wb.Sheets[wsName];
+          const json = XLSX.utils.sheet_to_json(ws, {defval:''});
+          // parse rows to question format
+          const parsed = parseQuestionsFromSheet(json);
+          if(!parsed || !parsed.length) return alert('Nenhuma pergunta encontrada no arquivo.');
+          if(!state.room) {
+            const keep = confirm('Você ainda não criou uma sala. Deseja carregar perguntas no banco público temporário local? Recomendado criar sala primeiro.');
+            if(!keep) return;
+          }
+          // save to db
+          await db.ref(`rooms/${state.room}/questions`).set(parsed);
+          alert(`Importadas ${parsed.length} perguntas!`);
+        } catch(err){
+          console.error(err);
+          alert('Erro ao processar o arquivo. Verifique o formato.');
+        } finally {
+          fileInput.value = '';
+        }
+      });
+
+      startBtn.addEventListener('click', async ()=>{
+        if(state.role!=='organizer') return alert('Somente organizador');
+        const qsSnap = await db.ref(`rooms/${state.room}/questions`).get();
+        const qs = qsSnap.val();
+        if(!qs || !qs.length) return alert('Carregue perguntas primeiro.');
+        const first = qs[0];
+        const startAt = Date.now();
+        await db.ref(`rooms/${state.room}/current`).set({ index:0, q:first.q, options:first.options, correct:first.answer, time:first.time||20, startAt });
+        statusLabel.innerText = `Pergunta 1/${qs.length} ativa`;
+        scheduleTally(state.room, 0, startAt, (first.time||20)*1000);
+      });
+
+      nextBtn.addEventListener('click', async ()=>{
+        if(state.role!=='organizer') return;
+        const curSnap = await db.ref(`rooms/${state.room}/current`).get(); const cur = curSnap.val(); if(!cur) return;
+        const qsSnap = await db.ref(`rooms/${state.room}/questions`).get(); const qs = qsSnap.val() || [];
+        const next = qs[cur.index+1]; if(!next) return alert('Fim do quiz');
+        const startAt = Date.now();
+        await db.ref(`rooms/${state.room}/current`).set({ index:cur.index+1, q:next.q, options:next.options, correct:next.answer, time:next.time||20, startAt });
+        leftCard.querySelector('#statusLabel').innerText = `Pergunta ${cur.index+2}/${qs.length} ativa`;
+        scheduleTally(state.room, cur.index+1, startAt, (next.time||20)*1000);
+      });
+
+      prevBtn.addEventListener('click', async ()=>{
+        if(state.role!=='organizer') return;
+        const curSnap = await db.ref(`rooms/${state.room}/current`).get(); const cur = curSnap.val(); if(!cur) return;
+        const prevIndex = Math.max(0, cur.index-1);
+        const qsSnap = await db.ref(`rooms/${state.room}/questions`).get(); const qs = qsSnap.val() || [];
+        const prev = qs[prevIndex]; if(!prev) return alert('Nenhuma anterior');
+        const startAt = Date.now();
+        await db.ref(`rooms/${state.room}/current`).set({ index:prevIndex, q:prev.q, options:prev.options, correct:prev.answer, time:prev.time||20, startAt });
+        leftCard.querySelector('#statusLabel').innerText = `Pergunta ${prevIndex+1}/${qs.length} ativa`;
+        scheduleTally(state.room, prevIndex, startAt, (prev.time||20)*1000);
+      });
+
+      endBtn.addEventListener('click', async ()=>{
+        if(state.role!=='organizer') return;
+        await db.ref(`rooms/${state.room}/current`).remove();
+        renderFinal();
+      });
+
+      restartQuizBtn.addEventListener('click', async ()=>{
+        if(state.role!=='organizer') return;
+        await db.ref(`rooms/${state.room}/answers`).remove();
+        const playersSnap = await db.ref(`rooms/${state.room}/players`).get();
+        const players = playersSnap.val() || {};
+        for(const uid of Object.keys(players)) await db.ref(`rooms/${state.room}/players/${uid}`).update({ score:0, correctCount:0, answeredCount:0, avgTime:0 });
+        await db.ref(`rooms/${state.room}/tallied`).remove();
+        leftCard.querySelector('#statusLabel').innerText = 'Quiz reiniciado';
+      });
+    }
+
+    // Player
+    function bindPlayer(){
+      const joinBtn = leftCard.querySelector('#joinRoomBtn');
+      joinBtn.addEventListener('click', async ()=>{
+        const name = leftCard.querySelector('#playerName').value.trim();
+        const room = leftCard.querySelector('#playerRoom').value.trim().toUpperCase();
+        if(!name||!room) return alert('Preencha nome e sala.');
+        state.role='player'; state.name=name; state.room=room; state.uid = genUid(name);
+        const ref = db.ref(`rooms/${room}/players/${state.uid}`);
+        await ref.set({ name, score:0, correctCount:0, answeredCount:0, avgTime:0, connectedAt: firebase.database.ServerValue.TIMESTAMP });
+        ref.onDisconnect().remove();
+        attachRoom(room);
+        openGameUI();
+      });
+    }
+
+    // attach listeners
+    function attachRoom(roomId){
+      db.ref(`rooms/${roomId}/players`).on('value', snap=>{
+        const players = snap.val() || {};
+        $('playerCount').innerText = `${Object.keys(players).length} jogadores`;
+        renderLeaderboard(players);
+      });
+
+      db.ref(`rooms/${roomId}/current`).on('value', snap=>{
+        const cur = snap.val();
+        if(!cur){
+          if(state.role==='player'){
+            if($('questionText')) $('questionText').innerText = 'Aguardando o Organizador iniciar o quiz...';
+            if($('optionsArea')) $('optionsArea').innerHTML = '';
+            if($('timer')) $('timer').innerText = 'Tempo: --s';
+          }
+          return;
+        }
+        if(state.role==='player'){
+          if(!$('questionText')) openGameUI();
+          showQuestion(cur);
+        }
+      });
+    }
+
+    // player shows question
+    function showQuestion(cur){
+      if(localTimer){ clearInterval(localTimer); localTimer = null; }
+      const qText = $('questionText'); const opts = $('optionsArea'); const fb = $('feedbackArea');
+      fb.classList.add('hidden');
+      qText.innerText = cur.q || '—';
+      opts.innerHTML = '';
+      $('qIndex').innerText = `Pergunta ${Number(cur.index)+1}`;
+      (cur.options||[]).forEach((opt,i)=>{
+        const b = create('button'); b.className='option-btn'; b.textContent = opt; b.dataset.index = i;
+        b.addEventListener('click', async ()=>{
+          Array.from(opts.children).forEach(x=>x.classList.add('disabled'));
+          const ansRef = db.ref(`rooms/${state.room}/answers/${cur.index}/${state.uid}`);
+          const got = await ansRef.get(); if(got.exists()) return;
+          const at = Date.now();
+          const isCorrect = Number(i) === Number(cur.correct);
+          await ansRef.set({ choice:Number(i), at, name: state.name, isCorrect: !!isCorrect });
+          if(isCorrect) b.classList.add('correct'); else b.classList.add('wrong');
+          showFeedback(isCorrect);
+        });
+        opts.appendChild(b);
+      });
+
+      const total = Number(cur.time || 20);
+      const startAt = Number(cur.startAt) || Date.now();
+      const progressBar = $('progressBar');
+      function tick(){
+        const elapsed = Date.now() - startAt;
+        const remS = Math.max(0, Math.ceil((startAt + total*1000 - Date.now())/1000));
+        const pct = Math.max(0, Math.min(100, Math.round(((total*1000 - elapsed)/(total*1000))*100)));
+        if(progressBar) progressBar.style.width = pct + '%';
+        if($('timer')) $('timer').innerText = `Tempo: ${remS}s`;
+        if(remS <= 0 && localTimer){ clearInterval(localTimer); localTimer = null; }
+      }
+      tick();
+      localTimer = setInterval(tick, 200);
+    }
+
+    function showFeedback(ok){
+      const fb = $('feedbackArea'); fb.classList.remove('hidden','good','bad'); fb.classList.add(ok?'good':'bad'); fb.innerText = ok ? POSITIVE[Math.floor(Math.random()*POSITIVE.length)] : NEGATIVE[Math.floor(Math.random()*NEGATIVE.length)];
+    }
+
+    // scheduling tally
+    function scheduleTally(room, index, startAt, totalMs){
+      const key = `${room}::${index}`;
+      if(scheduled[key]) return;
+      scheduled[key] = true;
+      setTimeout(()=> tallyQuestion(room, index, startAt, totalMs), totalMs + 900);
+    }
+
+    // tally
+    async function tallyQuestion(room, index, startAt, totalMs){
+      try{
+        const markRef = db.ref(`rooms/${room}/tallied/${index}`);
+        const mark = await markRef.get();
+        if(mark.exists()) return;
+
+        const answersSnap = await db.ref(`rooms/${room}/answers/${index}`).get();
+        const answers = answersSnap.val() || {};
+        const playersSnap = await db.ref(`rooms/${room}/players`).get();
+        const players = playersSnap.val() || {};
+
+        for(const uid of Object.keys(answers)){
+          const a = answers[uid];
+          if(!a) continue;
+          const elapsed = Math.max(0, Number(a.at || Date.now()) - Number(startAt));
+          const within = elapsed <= Number(totalMs);
+          const correct = !!a.isCorrect && within;
+
+          const p = players[uid] || { score:0, correctCount:0, answeredCount:0, avgTime:0 };
+          const prevAnswered = Number(p.answeredCount || 0);
+          const newAnswered = prevAnswered + 1;
+          const prevCorrect = Number(p.correctCount || 0);
+          const newCorrect = prevCorrect + (correct ? 1 : 0);
+          const prevScore = Number(p.score || 0);
+          const newScore = prevScore + (correct ? 10 : 0);
+          const prevAvg = Number(p.avgTime || 0);
+          const prevTotalTime = prevAvg * prevAnswered;
+          const newAvg = Math.round((prevTotalTime + elapsed) / newAnswered);
+
+          await db.ref(`rooms/${room}/players/${uid}`).update({
+            score: newScore,
+            correctCount: newCorrect,
+            answeredCount: newAnswered,
+            avgTime: newAvg
+          });
+        }
+
+        await markRef.set({ talliedAt: firebase.database.ServerValue.TIMESTAMP });
+        const freshPlayers = (await db.ref(`rooms/${room}/players`).get()).val() || {};
+        renderLeaderboard(freshPlayers);
+      } catch(err){
+        console.error('Erro em tallyQuestion:', err);
+      }
+    }
+
+    function renderLeaderboard(playersObj){
+      const players = playersObj || {};
+      const list = Object.keys(players).map(uid => {
+        const p = players[uid] || {};
+        return { uid, name: p.name || 'Jogador', score: Number(p.score || 0), correct: Number(p.correctCount || 0), avgTime: Number(p.avgTime || 0) };
+      });
+      list.sort((A,B) => {
+        if(B.score !== A.score) return B.score - A.score;
+        return A.avgTime - B.avgTime;
+      });
+
+      if(list.length === 0){
+        organizerLeaderboard.innerHTML = '<div class="small">Nenhum jogador ainda</div>';
+        return;
+      }
+
+      const html = list.map((p,i)=>{
+        const medal = i===0?'<div class="medal gold">1</div>':i===1?'<div class="medal silver">2</div>':i===2?'<div class="medal bronze">3</div>':'<div style="width:44px"></div>';
+        const avgDisplay = p.avgTime === 0 ? '--' : (p.avgTime/1000).toFixed(1) + 's';
+        return `<div class="lead-item ${i<3?'top':''}" data-uid="${p.uid}">
+          <div style="display:flex;gap:12px;align-items:center">
+            ${medal}
+            <div style="font-weight:800">${escapeHtml(p.name)}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-weight:800">${p.score} pts</div>
+            <div class="small">${p.correct} acertos — ${avgDisplay}</div>
+          </div>
+        </div>`;
+      }).join('');
+      organizerLeaderboard.innerHTML = html;
+    }
+
+    async function renderFinal(){
+      if(!state.room) return;
+      const players = (await db.ref(`rooms/${state.room}/players`).get()).val() || {};
+      renderLeaderboard(players);
+      $('finalRanking').innerHTML = organizerLeaderboard.innerHTML;
+      // optional: clear current question
+      await db.ref(`rooms/${state.room}/current`).remove();
+    }
+
+    // utilities
+    function genUid(n){ return n.replace(/\s+/g,'_') + '_' + Math.floor(Math.random()*99999); }
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // parse sheet rows into internal question format
+    function parseQuestionsFromSheet(rows){
+      // rows is array of objects with column headers as keys
+      // expected keys (case-insensitive): Pergunta, Opcao A, Opcao B, Opcao C, Opcao D, RespostaCorreta, Tempo
+      const normalized = rows.map(r=>{
+        const nr = {};
+        for(const k of Object.keys(r)){
+          const nk = k.toString().trim().toLowerCase();
+          nr[nk] = r[k];
+        }
+        return nr;
+      });
+
+      const res = [];
+      for(const r of normalized){
+        // find pergunta
+        const q = r['pergunta'] || r['pergunta?'] || r['questão'] || r['questao'] || r['q'] || r['question'];
+        if(!q) continue;
+        const optA = r['opção a'] || r['opcao a'] || r['a'] || r['opcao_a'] || r['opcao a'] || r['opcao_a'] || r['opcaoa'] || r['opcao a'];
+        const optB = r['opção b'] || r['opcao b'] || r['b'] || r['opcao_b'] || r['opcaob'];
+        const optC = r['opção c'] || r['opcao c'] || r['c'] || r['opcao_c'];
+        const optD = r['opção d'] || r['opcao d'] || r['d'] || r['opcao_d'];
+        const opts = [];
+        if(optA) opts.push(String(optA));
+        if(optB) opts.push(String(optB));
+        if(optC) opts.push(String(optC));
+        if(optD) opts.push(String(optD));
+        // fallback: try columns 'option1','option2'...
+        if(opts.length === 0){
+          for(let i=1;i<=6;i++){
+            const candidate = r['opcao '+i] || r['option '+i] || r['option'+i] || r['opcao'+i];
+            if(candidate) opts.push(String(candidate));
+          }
+        }
+        // resposta correta
+        let ans = r['respostacorreta'] || r['respostacorreta '] || r['resposta'] || r['resposta correta'] || r['resposta_correta'] || r['respostacorreta?'] || r['resposta correta'];
+        let answerIndex = 0;
+        if(ans !== undefined && ans !== null && ans !== ''){
+          const s = String(ans).trim();
+          if(/^[0-9]+$/.test(s)) answerIndex = Number(s);
+          else if(/^[a-dA-D]$/.test(s)) {
+            answerIndex = 'ABCD'.indexOf(s.toUpperCase());
+          } else {
+            // try to match to one of the options
+            const idx = opts.findIndex(o => String(o).trim().toLowerCase() === s.toLowerCase());
+            if(idx >= 0) answerIndex = idx;
+          }
+        }
+        const time = Number(r['tempo'] || r['time'] || 20) || 20;
+        res.push({ q: String(q), options: opts.length ? opts : ['A','B'], answer: answerIndex, time });
+      }
+      return res;
+    }
+
+    // expose for debug
+    window._drs = { OFFICIAL_QUESTIONS, scheduleTally, tallyQuestion, parseQuestionsFromSheet };
+
+    console.log('DRS Play (melhorado) pronto');
+  });
+  </script>
+</body>
+</html>
