@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>DRS Play — Quiz Treinamento</title>
+  <title>Cenjud Play — Desafio Interativo</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -58,15 +58,29 @@
     .options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
     .option-btn{padding:14px;border-radius:12px;border:1px solid #eef4ff;background:linear-gradient(180deg,#fff,#f7fbff);font-weight:800;cursor:pointer;transition:transform .12s,box-shadow .12s}
     .option-btn:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(3,16,70,0.06)}
-    .option-btn.correct{background:linear-gradient(90deg,#ecfdf5,#bbf7d0);border-color:#bbf7d0}
-    .option-btn.wrong{background:linear-gradient(90deg,#fff0f0,#ffd6d6);border-color:#ffd6d6}
+    .option-btn.correct{background:linear-gradient(90deg,#ecfdf5,#bbf7d0);border-color:#bbf7d0;transform:scale(1.02)}
+    .option-btn.wrong{background:linear-gradient(90deg,#fff0f0,#ffd6d6);border-color:#ffd6d6;transform:scale(.98)}
     .feedback{margin-top:12px;padding:10px;border-radius:10px;font-weight:800;text-align:center}
     .feedback.good{background:#ecfdf5;color:var(--success);border-left:4px solid var(--success)}
     .feedback.bad{background:#fff0f0;color:var(--danger);border-left:4px solid var(--danger)}
     .hidden{display:none}
+    #youName { font-weight:900; font-size:20px; color:var(--accent); text-align:center; margin-top:6px; letter-spacing:0.3px; }
+    /* final screen */
+    .final-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.55);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .final-card{width:min(760px,95%);padding:22px;border-radius:16px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:0 20px 60px rgba(2,6,23,0.32)}
+    .final-medal{font-size:28px;margin-right:12px}
+    .final-top{display:flex;gap:14px;align-items:center;justify-content:center;margin-bottom:12px}
+    .final-list{margin-top:8px}
+    /* sound and notification */
+    .sound-toggle{position:fixed;right:18px;top:18px;z-index:99999;background:linear-gradient(90deg,#fff,#f7fbff);border-radius:12px;padding:10px;border:1px solid #eef4ff;box-shadow:0 8px 26px rgba(2,6,23,0.12);display:flex;gap:8px;align-items:center}
+    .sound-toggle button{background:transparent;border:0;cursor:pointer;font-size:18px}
+    .volume-control{width:140px}
+    .toast-music{position:fixed;right:18px;bottom:18px;background:linear-gradient(90deg,#0b74ff,#00b3ff);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;box-shadow:0 8px 26px rgba(2,6,23,0.18);display:none;z-index:100000}
     @media(max-width:980px){
       .stage{grid-template-columns:1fr; padding-bottom:12px}
       .hero{flex-direction:column;align-items:flex-start;gap:12px}
+      .sound-toggle{right:12px;top:12px;padding:8px}
+      .volume-control{width:100px}
     }
   </style>
 </head>
@@ -74,8 +88,8 @@
   <div class="container">
     <div class="hero">
       <div class="brand">
-        <h1>DRS Play</h1>
-        <p>Quiz institucional — rápido, responsivo e moderno</p>
+        <h1>Cenjud Play</h1>
+        <p>Desafio interativo</p>
       </div>
       <div class="roles">
         <button id="cardOrganizer" class="role-btn" title="Organizador">
@@ -126,9 +140,18 @@
           <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
             <button id="createRoomBtn" class="btn-primary">Criar / Entrar</button>
             <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" class="hidden">
-            <button id="loadDefaultBtn" class="btn-ghost">Carregar perguntas</button>
-            <button id="importBtn" class="btn-ghost" title="Importar .xlsx ou .csv">Importar arquivo</button>
+            <!-- removed Carregar perguntas button as requested -->
+            <button id="importBtn" class="btn-ghost" title="Importar .xlsx ou .csv">Importar Quiz</button>
           </div>
+
+          <!-- music selector -->
+          <label class="small" style="margin-top:12px;display:block;">🎧 Trilha sonora</label>
+          <select id="musicSelect" class="input" style="margin-top:6px">
+            <option value="">Nenhuma</option>
+            <option value="arcade">Arcade Fun (8-bit)</option>
+            <option value="beat">Beat Rush (Eletrônica)</option>
+            <option value="victory">Victory Vibes (Pop)</option>
+          </select>
 
           <div id="quizControls" style="margin-top:16px;display:none">
             <div class="host-grid">
@@ -164,7 +187,7 @@
         <div class="game-hero">
           <div>
             <div class="small" id="qIndex">Pergunta —</div>
-            <div id="youName" style="font-weight:900">—</div>
+            <div id="youName">—</div>
           </div>
           <div style="text-align:center">
             <div id="timer" class="small status-pill">Tempo: --s</div>
@@ -182,6 +205,9 @@
 
   </div>
 
+  <!-- floating music toast -->
+  <div id="musicToast" class="toast-music">🎵 Trilha ativada</div>
+
   <!-- Firebase (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -191,7 +217,7 @@
 
   <script>
   window.addEventListener('DOMContentLoaded', () => {
-    // Firebase config (mantive o seu - ajuste se for preciso)
+    // Firebase config (mantive o seu)
     const firebaseConfig = {
       apiKey: "AIzaSyBJmHP0hkqc9ry36UWDuns614ebWWO8xe0",
       authDomain: "quiz-treinamento-2025.firebaseapp.com",
@@ -201,16 +227,28 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // music tracks (livre de direitos / exemplos)
+    const TRACKS = {
+      arcade: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_69cbebba88.mp3",
+      beat: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_63d3ff536d.mp3",
+      victory: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e32ff08c9.mp3"
+    };
+
+    // sound effects (divertidos e notáveis)
+    const EFFECTS = {
+      correct: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_35c388b8e7.mp3",
+      wrong: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_5a2b1cf52b.mp3"
+    };
+
     // helpers
     const $ = id => document.getElementById(id);
     const create = (s) => document.createElement(s);
 
-    // sample official questions (fallback)
+    // fallback sample questions (kept for debug)
     const OFFICIAL_QUESTIONS = [
       {"q":"É correto o uso da expressão: “Certifico que encaminhei, via SIGE, o presente processo para que o alvará seja cumprido pelo suporte do núcleo.”","options":["a) Correto","b) Incorreto"],"answer":1,"time":20},
       {"q":"É correto o uso da expressão: “Certifico que decorreu o prazo legal/concedido em despacho, sem que a parte requerida se manifestasse nos autos.”","options":["a) Correto","b) Incorreto"],"answer":0,"time":20},
       {"q":"É correto o uso da expressão: “Certifico que deixo de expedir o competente alvará por ter sido apresentada a petição ID XXX, onde o patrono apresenta pedido para pagamento a herdeiros.”","options":["a) Correto","b) Incorreto"],"answer":0,"time":20}
-      // ... mantenha ou adicione conforme deseja
     ];
 
     const POSITIVE=["🎉 Muito bem!","👏 Você mandou bem!","🔥 Excelente!"];
@@ -221,12 +259,69 @@
     let localTimer = null;
     const scheduled = {};
 
+    // audio players
+    const sharedAudio = new Audio();
+    sharedAudio.loop = true;
+    sharedAudio.volume = 0.7; // default 70%
+
+    const effectCorrect = new Audio(EFFECTS.correct);
+    const effectWrong = new Audio(EFFECTS.wrong);
+    effectCorrect.volume = 0.7;
+    effectWrong.volume = 0.7;
+
+    // read persisted settings (mute/volume)
+    const LS_MUTE = 'cj_sound_muted';
+    const LS_VOL  = 'cj_sound_volume';
+    let isMuted = localStorage.getItem(LS_MUTE) === 'true';
+    let localVolume = Number(localStorage.getItem(LS_VOL) || 0.7);
+
+    sharedAudio.volume = localVolume;
+    effectCorrect.volume = localVolume;
+    effectWrong.volume = localVolume;
+
     // base elements
     const cardOrganizer = $('cardOrganizer');
     const cardPlayer = $('cardPlayer');
     const stage = $('stage');
     const leftCard = $('leftCard');
     const organizerLeaderboard = $('organizerLeaderboard');
+    const musicToast = $('musicToast');
+
+    // create floating sound control (hidden until join/create)
+    const soundDiv = document.createElement('div');
+    soundDiv.className = 'sound-toggle';
+    soundDiv.style.display = 'none';
+    soundDiv.innerHTML = `
+      <button id="soundToggleBtn" title="Ativar / Desativar som">` + (isMuted ? '🔇' : '🔊') + `</button>
+      <input id="volumeRange" class="volume-control" type="range" min="0" max="1" step="0.05" value="${localVolume}">
+    `;
+    document.body.appendChild(soundDiv);
+
+    const soundToggleBtn = soundDiv.querySelector('#soundToggleBtn');
+    const volumeRange = soundDiv.querySelector('#volumeRange');
+
+    function updateSoundUI(){
+      soundToggleBtn.textContent = isMuted ? '🔇' : '🔊';
+      volumeRange.value = localVolume;
+      sharedAudio.muted = !!isMuted;
+      effectCorrect.muted = !!isMuted;
+      effectWrong.muted = !!isMuted;
+    }
+    updateSoundUI();
+
+    soundToggleBtn.addEventListener('click', ()=>{
+      isMuted = !isMuted;
+      localStorage.setItem(LS_MUTE, isMuted ? 'true' : 'false');
+      updateSoundUI();
+    });
+
+    volumeRange.addEventListener('input', (e)=>{
+      localVolume = Number(e.target.value);
+      sharedAudio.volume = localVolume;
+      effectCorrect.volume = localVolume;
+      effectWrong.volume = localVolume;
+      localStorage.setItem(LS_VOL, String(localVolume));
+    });
 
     cardOrganizer.addEventListener('click', ()=> openOrganizer());
     cardPlayer.addEventListener('click', ()=> openPlayer());
@@ -237,6 +332,8 @@
       const tpl = document.getElementById('organizerTemplate').content.cloneNode(true);
       leftCard.appendChild(tpl);
       bindOrganizer();
+      // show sound UI for organizer
+      soundDiv.style.display = 'flex';
     }
 
     function openPlayer(){
@@ -245,20 +342,26 @@
       const tpl = document.getElementById('playerTemplate').content.cloneNode(true);
       leftCard.appendChild(tpl);
       bindPlayer();
+      // sound UI will be shown after join (handled in bindPlayer)
     }
 
     function openGameUI(){
       leftCard.innerHTML = '';
       const tpl = document.getElementById('gameTemplate').content.cloneNode(true);
       leftCard.appendChild(tpl);
+      // set player's name
+      if($('youName') && state.name) $('youName').innerText = state.name;
+      // show sound controls during game
+      soundDiv.style.display = 'flex';
+      updateSoundUI();
     }
 
     // Organizer
     function bindOrganizer(){
       const createBtn = leftCard.querySelector('#createRoomBtn');
-      const loadBtn = leftCard.querySelector('#loadDefaultBtn');
       const importBtn = leftCard.querySelector('#importBtn');
       const fileInput = leftCard.querySelector('#fileInput');
+      const musicSelect = leftCard.querySelector('#musicSelect');
       const startBtn = leftCard.querySelector('#startBtn');
       const prevBtn = leftCard.querySelector('#prevBtn');
       const nextBtn = leftCard.querySelector('#nextBtn');
@@ -272,7 +375,6 @@
         if(!name||!room) return alert('Preencha nome e sala.');
         state.role='organizer'; state.name=name; state.room=room; state.uid = genUid(name);
 
-        // check existing room
         const existsSnap = await db.ref(`rooms/${room}/meta`).get();
         if(existsSnap.exists()){
           const ok = confirm(`A sala "${room}" já existe. Deseja entrar na sala existente? (OK = sim)`);
@@ -284,13 +386,12 @@
         statusLabel.innerText = `Sala ${room} criada/ativa`;
         attachRoom(room);
         alert('Sala pronta!');
-      });
 
-      loadBtn.addEventListener('click', async ()=>{
-        if(!state.room) return alert('Crie a sala primeiro.');
-        // escrever OFFICIAL_QUESTIONS no banco
-        await db.ref(`rooms/${state.room}/questions`).set(OFFICIAL_QUESTIONS);
-        alert('Perguntas padrão carregadas!');
+        // bind music select initial value from DB
+        db.ref(`rooms/${state.room}/music`).get().then(snap => {
+          const val = snap.val() || '';
+          if(musicSelect) musicSelect.value = val;
+        });
       });
 
       importBtn.addEventListener('click', ()=> fileInput.click());
@@ -300,18 +401,15 @@
         try{
           const arr = await f.arrayBuffer();
           const wb = XLSX.read(arr, {type:'array'});
-          // assumimos primeira sheet
           const wsName = wb.SheetNames[0];
           const ws = wb.Sheets[wsName];
           const json = XLSX.utils.sheet_to_json(ws, {defval:''});
-          // parse rows to question format
           const parsed = parseQuestionsFromSheet(json);
           if(!parsed || !parsed.length) return alert('Nenhuma pergunta encontrada no arquivo.');
           if(!state.room) {
             const keep = confirm('Você ainda não criou uma sala. Deseja carregar perguntas no banco público temporário local? Recomendado criar sala primeiro.');
             if(!keep) return;
           }
-          // save to db
           await db.ref(`rooms/${state.room}/questions`).set(parsed);
           alert(`Importadas ${parsed.length} perguntas!`);
         } catch(err){
@@ -320,6 +418,15 @@
         } finally {
           fileInput.value = '';
         }
+      });
+
+      // music change -> write to DB so players sync
+      musicSelect.addEventListener('change', (e)=>{
+        if(!state.room) return alert('Crie a sala primeiro antes de escolher a música.');
+        const val = e.target.value || '';
+        db.ref(`rooms/${state.room}/music`).set(val);
+        // show toast locally for organizer
+        showMusicToast();
       });
 
       startBtn.addEventListener('click', async ()=>{
@@ -359,8 +466,10 @@
 
       endBtn.addEventListener('click', async ()=>{
         if(state.role!=='organizer') return;
+        // remove current question so players see "Aguardando"
         await db.ref(`rooms/${state.room}/current`).remove();
-        renderFinal();
+        // show final overlay but keep listeners active (so leaderboard still updates)
+        renderFinalOverlay();
       });
 
       restartQuizBtn.addEventListener('click', async ()=>{
@@ -390,14 +499,16 @@
       });
     }
 
-    // attach listeners
+    // attach listeners to room (keeps leaderboard live)
     function attachRoom(roomId){
+      // players / leaderboard
       db.ref(`rooms/${roomId}/players`).on('value', snap=>{
         const players = snap.val() || {};
         $('playerCount').innerText = `${Object.keys(players).length} jogadores`;
         renderLeaderboard(players);
       });
 
+      // current question
       db.ref(`rooms/${roomId}/current`).on('value', snap=>{
         const cur = snap.val();
         if(!cur){
@@ -413,6 +524,28 @@
           showQuestion(cur);
         }
       });
+
+      // music sync: when music key changes, update audio for all players
+      db.ref(`rooms/${roomId}/music`).on('value', snap=>{
+        const key = snap.val() || '';
+        if(!key){ try{ sharedAudio.pause(); sharedAudio.src = ''; }catch(e){} return; }
+        const url = TRACKS[key];
+        if(!url) return;
+        if(sharedAudio.src !== url){
+          sharedAudio.src = url;
+          sharedAudio.loop = true;
+        }
+        // apply mute/volume settings
+        sharedAudio.volume = localVolume;
+        sharedAudio.muted = isMuted;
+        // try to play; mobile browsers may require user gesture — catch errors silently
+        sharedAudio.play().catch(err => {
+          // log only
+          console.log('audio play blocked (gesture required)', err);
+        });
+        // show toast to players too
+        showMusicToast();
+      });
     }
 
     // player shows question
@@ -423,6 +556,9 @@
       qText.innerText = cur.q || '—';
       opts.innerHTML = '';
       $('qIndex').innerText = `Pergunta ${Number(cur.index)+1}`;
+      // ensure player's name is visible on screen
+      if($('youName') && state.name) $('youName').innerText = state.name;
+
       (cur.options||[]).forEach((opt,i)=>{
         const b = create('button'); b.className='option-btn'; b.textContent = opt; b.dataset.index = i;
         b.addEventListener('click', async ()=>{
@@ -432,7 +568,7 @@
           const at = Date.now();
           const isCorrect = Number(i) === Number(cur.correct);
           await ansRef.set({ choice:Number(i), at, name: state.name, isCorrect: !!isCorrect });
-          if(isCorrect) b.classList.add('correct'); else b.classList.add('wrong');
+          if(isCorrect){ b.classList.add('correct'); playCorrect(); } else { b.classList.add('wrong'); playWrong(); }
           showFeedback(isCorrect);
         });
         opts.appendChild(b);
@@ -453,8 +589,20 @@
       localTimer = setInterval(tick, 200);
     }
 
+    function playCorrect(){
+      try{
+        if(!isMuted){ effectCorrect.currentTime = 0; effectCorrect.volume = localVolume; effectCorrect.play().catch(()=>{}); }
+      }catch(e){}
+    }
+    function playWrong(){
+      try{
+        if(!isMuted){ effectWrong.currentTime = 0; effectWrong.volume = localVolume; effectWrong.play().catch(()=>{}); }
+      }catch(e){}
+    }
+
     function showFeedback(ok){
       const fb = $('feedbackArea'); fb.classList.remove('hidden','good','bad'); fb.classList.add(ok?'good':'bad'); fb.innerText = ok ? POSITIVE[Math.floor(Math.random()*POSITIVE.length)] : NEGATIVE[Math.floor(Math.random()*NEGATIVE.length)];
+      try{ if(ok) navigator.vibrate && navigator.vibrate([20]); else navigator.vibrate && navigator.vibrate([30,20]); }catch(e){}
     }
 
     // scheduling tally
@@ -511,6 +659,7 @@
       }
     }
 
+    // render leaderboard
     function renderLeaderboard(playersObj){
       const players = playersObj || {};
       const list = Object.keys(players).map(uid => {
@@ -544,13 +693,71 @@
       organizerLeaderboard.innerHTML = html;
     }
 
-    async function renderFinal(){
+    async function renderFinalOverlay(){
       if(!state.room) return;
       const players = (await db.ref(`rooms/${state.room}/players`).get()).val() || {};
-      renderLeaderboard(players);
-      $('finalRanking').innerHTML = organizerLeaderboard.innerHTML;
-      // optional: clear current question
-      await db.ref(`rooms/${state.room}/current`).remove();
+      const list = Object.keys(players).map(k => players[k]).sort((a,b) => (b.score||0) - (a.score||0));
+      // build overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'final-overlay';
+      overlay.innerHTML = `
+        <div class="final-card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>🏁 Resultado Final — Cenjud Play</h2>
+            <div style="display:flex;gap:8px">
+              <button id="shareBtn" class="btn-primary">📤 Compartilhar Resultado</button>
+              <button id="resetBtn" class="btn-ghost">🔄 Resetar Quiz</button>
+              <button id="closeFinal" class="btn-ghost">Fechar</button>
+            </div>
+          </div>
+          <div class="final-list">
+            ${list.map((p,i)=>`
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;margin-top:8px;background:#fff">
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div class="final-medal">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.'}</div>
+                  <div style="font-weight:800">${escapeHtml(p.name)} </div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-weight:800">${p.score || 0} pts</div>
+                  <div class="small">${(p.correctCount||0)} acertos — ${p.avgTime ? (p.avgTime/1000).toFixed(1)+'s' : '--'}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      // button handlers
+      $('shareBtn')?.addEventListener('click', ()=>{
+        const txt = list.map((p,i) => `${i+1}. ${p.name} — ${p.score||0} pts`).join('\\n');
+        if(navigator.share){
+          navigator.share({ title: 'Resultado Cenjud Play', text: txt }).catch(()=>{ alert('Compartilhar falhou. Copie o resultado:\\n' + txt); });
+        } else {
+          navigator.clipboard && navigator.clipboard.writeText(txt).then(()=> alert('Resultado copiado para a área de transferência!'), ()=> alert('Não foi possível copiar. Aqui está:\\n'+txt));
+        }
+      });
+
+      $('resetBtn')?.addEventListener('click', async ()=>{
+        if(!confirm('Resetar quiz (zerar pontuações e remover respostas)?')) return;
+        await db.ref(`rooms/${state.room}/answers`).remove();
+        const playersSnap = await db.ref(`rooms/${state.room}/players`).get();
+        const playersObj = playersSnap.val() || {};
+        for(const uid of Object.keys(playersObj)) await db.ref(`rooms/${state.room}/players/${uid}`).update({ score:0, correctCount:0, answeredCount:0, avgTime:0 });
+        await db.ref(`rooms/${state.room}/tallied`).remove();
+        overlay.remove();
+        alert('Quiz resetado');
+      });
+
+      $('closeFinal')?.addEventListener('click', ()=> overlay.remove());
+    }
+
+    // show short toast when music changed
+    function showMusicToast(){
+      try{
+        musicToast.style.display = 'block';
+        setTimeout(()=> { musicToast.style.display = 'none'; }, 2000);
+      }catch(e){}
     }
 
     // utilities
@@ -559,8 +766,6 @@
 
     // parse sheet rows into internal question format
     function parseQuestionsFromSheet(rows){
-      // rows is array of objects with column headers as keys
-      // expected keys (case-insensitive): Pergunta, Opcao A, Opcao B, Opcao C, Opcao D, RespostaCorreta, Tempo
       const normalized = rows.map(r=>{
         const nr = {};
         for(const k of Object.keys(r)){
@@ -572,11 +777,10 @@
 
       const res = [];
       for(const r of normalized){
-        // find pergunta
         const q = r['pergunta'] || r['pergunta?'] || r['questão'] || r['questao'] || r['q'] || r['question'];
         if(!q) continue;
-        const optA = r['opção a'] || r['opcao a'] || r['a'] || r['opcao_a'] || r['opcao a'] || r['opcao_a'] || r['opcaoa'] || r['opcao a'];
-        const optB = r['opção b'] || r['opcao b'] || r['b'] || r['opcao_b'] || r['opcaob'];
+        const optA = r['opção a'] || r['opcao a'] || r['a'] || r['opcao_a'] || r['opcaoa'];
+        const optB = r['opção b'] || r['opcao b'] || r['b'] || r['opcao_b'];
         const optC = r['opção c'] || r['opcao c'] || r['c'] || r['opcao_c'];
         const optD = r['opção d'] || r['opcao d'] || r['d'] || r['opcao_d'];
         const opts = [];
@@ -584,15 +788,13 @@
         if(optB) opts.push(String(optB));
         if(optC) opts.push(String(optC));
         if(optD) opts.push(String(optD));
-        // fallback: try columns 'option1','option2'...
         if(opts.length === 0){
           for(let i=1;i<=6;i++){
             const candidate = r['opcao '+i] || r['option '+i] || r['option'+i] || r['opcao'+i];
             if(candidate) opts.push(String(candidate));
           }
         }
-        // resposta correta
-        let ans = r['respostacorreta'] || r['respostacorreta '] || r['resposta'] || r['resposta correta'] || r['resposta_correta'] || r['respostacorreta?'] || r['resposta correta'];
+        let ans = r['respostacorreta'] || r['resposta'] || r['resposta correta'] || r['resposta_correta'];
         let answerIndex = 0;
         if(ans !== undefined && ans !== null && ans !== ''){
           const s = String(ans).trim();
@@ -600,7 +802,6 @@
           else if(/^[a-dA-D]$/.test(s)) {
             answerIndex = 'ABCD'.indexOf(s.toUpperCase());
           } else {
-            // try to match to one of the options
             const idx = opts.findIndex(o => String(o).trim().toLowerCase() === s.toLowerCase());
             if(idx >= 0) answerIndex = idx;
           }
@@ -612,9 +813,9 @@
     }
 
     // expose for debug
-    window._drs = { OFFICIAL_QUESTIONS, scheduleTally, tallyQuestion, parseQuestionsFromSheet };
+    window._drs = { OFFICIAL_QUESTIONS, scheduleTally, tallyQuestion, parseQuestionsFromSheet, TRACKS, EFFECTS };
 
-    console.log('DRS Play (melhorado) pronto');
+    console.log('Cenjud Play pronto — interface carregada');
   });
   </script>
 </body>
