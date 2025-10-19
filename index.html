@@ -82,7 +82,114 @@
       .sound-toggle{right:12px;top:12px;padding:8px}
       .volume-control{width:100px}
     }
-  </style>
+  
+#importBtn {
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  margin-top: 8px;
+}
+#importBtn:hover {
+  background-color: #1976d2;
+}
+
+
+    /* === Harmonized buttons for organizer action row === */
+    .action-row{display:flex;gap:12px;align-items:stretch;margin-top:12px}
+    .btn-small{
+      flex:1;
+      font-weight:700;
+      padding:10px 16px;
+      border-radius:10px;
+      min-height:44px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 18px rgba(0,59,142,0.12);
+      border:0;
+      cursor:pointer;
+      background:linear-gradient(90deg,var(--primary),var(--accent));
+      color:#fff;
+    }
+    .btn-small.ghost{
+      background:transparent;
+      color:var(--primary);
+      border:1px solid #eef4ff;
+      box-shadow:none;
+    }
+
+
+/* === Ajuste fino de alinhamento dos botões === */
+.action-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+.btn-small {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(0,59,142,0.12);
+  transition: all 0.25s ease;
+}
+.btn-small:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,59,142,0.18);
+}
+.btn-small.ghost {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid #dce8ff;
+  box-shadow: none;
+}
+#importBtn {
+  height: 48px !important;
+  min-height: 48px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px !important;
+}
+
+
+/* Correção de alinhamento vertical dos botões principais */
+.action-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start; /* ajusta base alinhada */
+}
+.action-row > * {
+  align-self: stretch; /* força altura e alinhamento iguais */
+}
+.hidden {
+  display: none !important;
+}
+.btn-small,
+#importBtn {
+  margin-top: 0 !important;
+  vertical-align: middle;
+}
+
+</style>
 </head>
 <body>
   <div class="container">
@@ -137,21 +244,26 @@
           <input id="organizerName" class="input" placeholder="Ex: João">
           <label class="small" style="margin-top:8px;display:block">Nome da sala</label>
           <input id="roomName" class="input" placeholder="Ex: TREINAMENTO_A">
-          <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
-            <button id="createRoomBtn" class="btn-primary">Criar / Entrar</button>
+          <div class="action-row">
+            <button id="createRoomBtn" class="btn-small">Criar / Entrar</button>
             <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" class="hidden">
-            <!-- removed Carregar perguntas button as requested -->
-            <button id="importBtn" class="btn-ghost" title="Importar .xlsx ou .csv">Importar Quiz</button>
+            <button id="importBtn" class="btn-small ghost">Importar Quiz</button>
           </div>
 
           <!-- music selector -->
           <label class="small" style="margin-top:12px;display:block;">🎧 Trilha sonora</label>
           <select id="musicSelect" class="input" style="margin-top:6px">
             <option value="">Nenhuma</option>
-            <option value="arcade">Arcade Fun (8-bit)</option>
-            <option value="beat">Beat Rush (Eletrônica)</option>
-            <option value="victory">Victory Vibes (Pop)</option>
+            <option value="energia">Energia</option>
+            <option value="blues">Blues</option>
+            <option value="funk">Funk</option>
+            <option value="estilo">Estilo</option>
+            <option value="corporativo">Corporativo</option>
+            <option value="pop">Pop</option>
+            <option value="horizonte">Horizonte</option>
           </select>
+
+          
 
           <div id="quizControls" style="margin-top:16px;display:none">
             <div class="host-grid">
@@ -228,11 +340,17 @@
     const db = firebase.database();
 
     // music tracks (livre de direitos / exemplos)
+    
     const TRACKS = {
-      arcade: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_69cbebba88.mp3",
-      beat: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_63d3ff536d.mp3",
-      victory: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e32ff08c9.mp3"
+      energia: "https://raw.githubusercontent.com/dirproccenjud/play/main/energy-pop-152391.mp3",
+      blues: "https://raw.githubusercontent.com/dirproccenjud/play/main/majestic-blues-351409.mp3",
+      funk: "https://raw.githubusercontent.com/dirproccenjud/play/main/fun-funk-music-349237.mp3",
+      estilo: "https://raw.githubusercontent.com/dirproccenjud/play/main/fashion-upbeat-dance-designer-416395.mp3",
+      corporativo: "https://raw.githubusercontent.com/dirproccenjud/play/main/ambient-corporate-inspiring-money-403965.mp3",
+      pop: "https://raw.githubusercontent.com/dirproccenjud/play/main/upbeat-pop-fun-happy-commercial-music-401980.mp3",
+      horizonte: "https://raw.githubusercontent.com/dirproccenjud/play/main/beyond-the-horizon-cinematic-background-music-for-video-short-2-413333.mp3"
     };
+
 
     // sound effects (divertidos e notáveis)
     const EFFECTS = {
