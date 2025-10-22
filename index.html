@@ -20,27 +20,33 @@
     }
     html,body{height:100%;margin:0;font-family:Inter,system-ui,Roboto,Arial;background:linear-gradient(180deg,var(--primary)10%,#0f3b7a50 40%,var(--bg)100%);color:var(--text)}
     .container{max-width:1100px;margin:28px auto;padding:18px}
-    .hero{
-      display:flex;gap:18px;align-items:center;justify-content:space-between;
-      background:linear-gradient(135deg,rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      border-radius:20px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.12);backdrop-filter: blur(6px);
-    }
+    .hero{display:flex;gap:18px;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(255,255,255,0.06), rgba(255,255,255,0.02));border-radius:20px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.12);backdrop-filter: blur(6px);}
     .brand{color:#fff}
     .brand h1{margin:0;font-weight:800;font-size:22px;letter-spacing:-0.5px}
     .brand p{margin:4px 0 0;color:#e6f0ff}
     .roles{display:flex;gap:12px}
-    .role-btn{
-      background:linear-gradient(90deg,#fff,#f8fbff);border-radius:12px;padding:12px 18px;border:0;cursor:pointer;min-width:180px;
-      display:flex;gap:12px;align-items:center;box-shadow:0 6px 18px rgba(3,16,70,0.14);transition:transform .18s, box-shadow .18s;
-    }
+    .role-btn{background:linear-gradient(90deg,#fff,#f8fbff);border-radius:12px;padding:12px 18px;border:0;cursor:pointer;min-width:180px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 18px rgba(3,16,70,0.14);transition:transform .18s, box-shadow .18s}
     .role-btn .icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(180deg,var(--accent),#3fd0ff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
     .role-btn:hover{transform:translateY(-6px);box-shadow:0 18px 30px rgba(3,16,70,0.18)}
     .stage{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:18px}
     .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 8px 24px rgba(2,6,23,0.08)}
     .input{display:block;width:100%;padding:10px;border-radius:10px;border:1px solid #e8eef9}
-    /* ajuste solicitado: limitar largura dos campos do jogador */
-    #playerName,#playerRoom{max-width:280px;}
+    /* ajuste: limitar largura dos campos e alinhar */
+    #playerName,#playerRoom,#roomName{max-width:280px;}
     .small{font-size:13px;color:var(--muted)}
+    /* === Botões Criar Sala e Importar Quiz uniformizados === */
+    #createRoomBtn, #importBtn {
+      width: 48%;
+      height: 46px;
+      font-weight: 700;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all .2s ease;
+    }
+    #createRoomBtn { background: linear-gradient(90deg,var(--primary),var(--accent)); color:#fff; border:0; box-shadow:0 8px 18px rgba(0,59,142,0.12); }
+    #importBtn { background: linear-gradient(90deg,#fff,#f8fbff); border:1px solid #e5ecfa; color:var(--primary); }
+    #createRoomBtn:hover, #importBtn:hover { transform: translateY(-3px); box-shadow:0 8px 22px rgba(3,16,70,0.12); }
+
     .btn-primary{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;border-radius:10px;padding:10px 12px;border:0;cursor:pointer;font-weight:700;box-shadow:0 8px 18px rgba(0,59,142,0.12)}
     .btn-ghost{background:transparent;border:1px solid #eef4ff;border-radius:10px;padding:10px 12px;cursor:pointer}
     .host-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
@@ -54,109 +60,58 @@
     .medal.silver{background:linear-gradient(180deg,#e6e6e6,#d5d5d5);color:#444}
     .medal.bronze{background:linear-gradient(180deg,#f7d7c2,#f3b58b);color:#6b3b10}
     .game-hero{display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .question{font-weight:800;font-size:20px}
+    /* === Caixa de pergunta mais alta e espaçada === */
+    .question {
+      font-weight:600;
+      font-size:18px;
+      line-height:1.5;
+      margin-bottom:18px;
+      padding:14px 10px;
+      border-radius:10px;
+      background:linear-gradient(180deg,#fff,#f8fafc);
+      box-shadow:0 4px 10px rgba(2,6,23,0.05);
+    }
     .progress{height:10px;background:#eef5ff;border-radius:999px;overflow:hidden;margin-top:10px}
     .progress > span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--accent),#59e0ff);transform-origin:left;transition:width 0.3s linear}
-    .options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-    .option-btn{padding:14px;border-radius:12px;border:1px solid #eef4ff;background:linear-gradient(180deg,#fff,#f7fbff);font-weight:800;cursor:pointer;transition:transform .12s,box-shadow .12s}
+    /* === Opções mais espaçosas e tipografia equilibrada === */
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:16px 14px;margin-top:16px}
+    .option-btn{padding:18px;border-radius:12px;border:1px solid #eef4ff;background:linear-gradient(180deg,#fff,#f7fbff);font-weight:600;font-size:16px;cursor:pointer;transition:transform .12s,box-shadow .12s}
     .option-btn:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(3,16,70,0.06)}
-    .option-btn.correct{background:linear-gradient(90deg,#ecfdf5,#bbf7d0);border-color:#bbf7d0;transform:scale(1.02)}
-    .option-btn.wrong{background:linear-gradient(90deg,#fff0f0,#ffd6d6);border-color:#ffd6d6;transform:scale(.98)}
+    /* === Alternativas corretas/incorretas suavizadas === */
+    .option-btn.correct{background:linear-gradient(90deg,#e7f8ee,#c8f0d3);border-color:#c8f0d3;transform:scale(1.02)}
+    .option-btn.wrong{background:linear-gradient(90deg,#fff3f3,#ffe0e0);border-color:#ffe0e0;transform:scale(.98)}
     .feedback{margin-top:12px;padding:10px;border-radius:10px;font-weight:800;text-align:center}
     .feedback.good{background:#ecfdf5;color:var(--success);border-left:4px solid var(--success)}
     .feedback.bad{background:#fff0f0;color:var(--danger);border-left:4px solid var(--danger)}
     .hidden{display:none}
     #youName { font-weight:900; font-size:20px; color:var(--accent); text-align:center; margin-top:6px; letter-spacing:0.3px; }
-    /* final screen */
     .final-overlay{position:fixed;inset:0;background:rgba(2,6,23,0.55);display:flex;align-items:center;justify-content:center;z-index:9999}
     .final-card{width:min(760px,95%);padding:22px;border-radius:16px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:0 20px 60px rgba(2,6,23,0.32)}
     .final-medal{font-size:28px;margin-right:12px}
     .final-top{display:flex;gap:14px;align-items:center;justify-content:center;margin-bottom:12px}
     .final-list{margin-top:8px}
-    /* sound and notification */
     .sound-toggle{position:fixed;right:18px;top:18px;z-index:99999;background:linear-gradient(90deg,#fff,#f7fbff);border-radius:12px;padding:10px;border:1px solid #eef4ff;box-shadow:0 8px 26px rgba(2,6,23,0.12);display:flex;gap:8px;align-items:center}
     .sound-toggle button{background:transparent;border:0;cursor:pointer;font-size:18px}
     .volume-control{width:140px}
     .toast-music{position:fixed;right:18px;bottom:18px;background:linear-gradient(90deg,#0b74ff,#00b3ff);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;box-shadow:0 8px 26px rgba(2,6,23,0.18);display:none;z-index:100000}
-
-    @media(max-width:980px){
-      .stage{grid-template-columns:1fr; padding-bottom:12px}
-      .hero{flex-direction:column;align-items:flex-start;gap:12px}
-      .sound-toggle{right:12px;top:12px;padding:8px}
-      .volume-control{width:100px}
-    }
-
-    /* harmonized buttons for organizer action row (kept styling) */
-    .action-row{display:flex;gap:12px;align-items:stretch;margin-top:12px}
-    .btn-small{
-      flex:1;
-      font-weight:700;
-      padding:10px 16px;
-      border-radius:10px;
-      min-height:44px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 8px 18px rgba(0,59,142,0.12);
-      border:0;
-      cursor:pointer;
-      background:linear-gradient(90deg,var(--primary),var(--accent));
-      color:#fff;
-    }
-    .btn-small.ghost{
-      background:transparent;
-      color:var(--primary);
-      border:1px solid #eef4ff;
-      box-shadow:none;
-    }
-
-    /* fine alignment */
-    .btn-small { height: 48px; min-height: 48px; padding: 0 16px; }
-    .btn-small:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,59,142,0.18); }
-    .btn-small.ghost { background: transparent; color: var(--primary); border: 1px solid #dce8ff; box-shadow:none; }
-
+    @media(max-width:980px){.stage{grid-template-columns:1fr;} .hero{flex-direction:column;align-items:flex-start;gap:12px}}
   </style>
 </head>
 <body>
   <div class="container">
     <div class="hero">
-      <div class="brand">
-        <h1>Cenjud Play</h1>
-        <p>Desafio interativo</p>
-      </div>
+      <div class="brand"><h1>Cenjud Play</h1><p>Desafio interativo</p></div>
       <div class="roles">
-        <button id="cardOrganizer" class="role-btn" title="Organizador">
-          <div class="icon">O</div>
-          <div>
-            <div style="font-weight:800">Organizador</div>
-            <div class="small">Crie sala e conduza</div>
-          </div>
-        </button>
-        <button id="cardPlayer" class="role-btn" title="Jogador">
-          <div class="icon">J</div>
-          <div>
-            <div style="font-weight:800">Jogador</div>
-            <div class="small">Participe e responda</div>
-          </div>
-        </button>
+        <button id="cardOrganizer" class="role-btn"><div class="icon">O</div><div><div style="font-weight:800">Organizador</div><div class="small">Crie sala e conduza</div></div></button>
+        <button id="cardPlayer" class="role-btn"><div class="icon">J</div><div><div style="font-weight:800">Jogador</div><div class="small">Participe e responda</div></div></button>
       </div>
     </div>
 
     <div class="stage" id="stage" style="display:none">
       <div class="card" id="leftCard"></div>
-
       <div class="card" id="rightCard">
-        <div class="leaderboard-title">
-          <div style="font-weight:800">Ranking — Tempo real</div>
-          <div class="small" id="playerCount">0 jogadores</div>
-        </div>
-        <div class="leaderboard-list" id="organizerLeaderboard">
-          <div class="small">Nenhum jogador ainda</div>
-        </div>
-        <div style="margin-top:12px">
-          <div class="small">Ranking final</div>
-          <div id="finalRanking" style="margin-top:8px"></div>
-        </div>
+        <div class="leaderboard-title"><div style="font-weight:800">Ranking — Tempo real</div><div class="small" id="playerCount">0 jogadores</div></div>
+        <div class="leaderboard-list" id="organizerLeaderboard"><div class="small">Nenhum jogador ainda</div></div>
       </div>
     </div>
 
@@ -164,43 +119,24 @@
     <template id="organizerTemplate">
       <div>
         <h2 style="margin:0 0 8px 0">Painel do Organizador</h2>
-        <div class="small">Configure a sala e conduza o quiz</div>
-        <div style="margin-top:12px">
-          <!-- Campo 'Seu nome' removido conforme solicitado -->
-          <label class="small" style="margin-top:8px;display:block">Nome da sala</label>
-          <input id="roomName" class="input" placeholder="Ex: TREINAMENTO_A">
-          <div class="action-row">
-            <button id="createRoomBtn" class="btn-small">Criar sala</button>
-            <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" class="hidden">
-            <button id="importBtn" class="btn-small ghost">Importar Quiz</button>
-          </div>
-
-          <!-- music selector -->
-          <label class="small" style="margin-top:12px;display:block;">🎧 Trilha sonora</label>
-          <select id="musicSelect" class="input" style="margin-top:6px">
-            <option value="">Nenhuma</option>
-            <option value="energia">Energia</option>
-            <option value="blues">Blues</option>
-            <option value="funk">Funk</option>
-            <option value="estilo">Estilo</option>
-            <option value="corporativo">Corporativo</option>
-            <option value="pop">Pop</option>
-            <option value="horizonte">Horizonte</option>
-          </select>
-
-          
-
-          <div id="quizControls" style="margin-top:16px;display:none">
-            <div class="host-grid">
-              <div class="status-pill" id="statusLabel">Aguardando</div>
-              <div style="text-align:right"><button id="restartQuizBtn" class="btn-ghost">Reiniciar Quiz</button></div>
-            </div>
-            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-              <button id="startBtn" class="btn-primary">Iniciar</button>
-              <button id="prevBtn" class="btn-ghost">Anterior</button>
-              <button id="nextBtn" class="btn-primary">Próxima</button>
-              <button id="endBtn" class="btn-ghost">Encerrar</button>
-            </div>
+        <label class="small" style="margin-top:8px;display:block">Nome da sala</label>
+        <input id="roomName" class="input" placeholder="Ex: TREINAMENTO_A">
+        <div style="margin-top:10px"><button id="createRoomBtn" class="btn-primary">Criar Sala</button></div>
+        <div class="action-row" style="margin-top:12px">
+          <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" class="hidden">
+          <button id="importBtn" class="btn-ghost">Importar Quiz</button>
+        </div>
+        <label class="small" style="margin-top:12px;display:block;">🎧 Trilha sonora</label>
+        <select id="musicSelect" class="input" style="margin-top:6px">
+          <option value="">Nenhuma</option><option value="energia">Energia</option><option value="blues">Blues</option><option value="funk">Funk</option><option value="estilo">Estilo</option><option value="corporativo">Corporativo</option><option value="pop">Pop</option><option value="horizonte">Horizonte</option>
+        </select>
+        <div id="quizControls" style="margin-top:16px;display:none">
+          <div class="host-grid"><div class="status-pill" id="statusLabel">Aguardando</div></div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button id="startBtn" class="btn-primary">Iniciar</button>
+            <button id="prevBtn" class="btn-ghost">Anterior</button>
+            <button id="nextBtn" class="btn-primary">Próxima</button>
+            <button id="endBtn" class="btn-ghost">Encerrar</button>
           </div>
         </div>
       </div>
@@ -213,9 +149,7 @@
         <input id="playerName" class="input" placeholder="Ex: Maria">
         <label class="small" style="margin-top:8px;display:block">Sala</label>
         <input id="playerRoom" class="input" placeholder="Ex: TREINAMENTO_A">
-        <div style="margin-top:10px">
-          <button id="joinRoomBtn" class="btn-primary">Entrar</button>
-        </div>
+        <div style="margin-top:10px"><button id="joinRoomBtn" class="btn-primary">Entrar</button></div>
       </div>
     </template>
 
@@ -226,11 +160,8 @@
             <div class="small" id="qIndex">Pergunta —</div>
             <div id="youName">—</div>
           </div>
-          <div style="text-align:center">
-            <div id="timer" class="small status-pill">Tempo: --s</div>
-          </div>
+          <div style="text-align:center"><div id="timer" class="small status-pill">Tempo: --s</div></div>
         </div>
-
         <div style="margin-top:12px">
           <div id="questionText" class="question">Aguardando início...</div>
           <div class="progress" aria-hidden="true"><span id="progressBar" style="width:100%"></span></div>
@@ -242,19 +173,17 @@
 
   </div>
 
-  <!-- floating music toast -->
   <div id="musicToast" class="toast-music">🎵 Trilha ativada</div>
 
   <!-- Firebase (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
   <!-- SheetJS for Excel/CSV import -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <script>
   window.addEventListener('DOMContentLoaded', () => {
-    // Firebase config (mantive o seu)
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBJmHP0hkqc9ry36UWDuns614ebWWO8xe0",
       authDomain: "quiz-treinamento-2025.firebaseapp.com",
@@ -264,8 +193,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // music tracks (livre de direitos / exemplos)
-    
+    // Tracks and effects
     const TRACKS = {
       energia: "https://raw.githubusercontent.com/dirproccenjud/play/main/energy-pop-152391.mp3",
       blues: "https://raw.githubusercontent.com/dirproccenjud/play/main/majestic-blues-351409.mp3",
@@ -275,23 +203,15 @@
       pop: "https://raw.githubusercontent.com/dirproccenjud/play/main/upbeat-pop-fun-happy-commercial-music-401980.mp3",
       horizonte: "https://raw.githubusercontent.com/dirproccenjud/play/main/beyond-the-horizon-cinematic-background-music-for-video-short-2-413333.mp3"
     };
-
-
-    // sound effects (divertidos e notáveis)
-    const EFFECTS = {
-      correct: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_35c388b8e7.mp3",
-      wrong: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_5a2b1cf52b.mp3"
-    };
+    const EFFECTS = { correct: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_35c388b8e7.mp3", wrong: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_5a2b1cf52b.mp3" };
 
     // helpers
     const $ = id => document.getElementById(id);
     const create = (s) => document.createElement(s);
 
-    // fallback sample questions (kept for debug)
+    // sample questions fallback
     const OFFICIAL_QUESTIONS = [
-      {"q":"É correto o uso da expressão: “Certifico que encaminhei, via SIGE, o presente processo para que o alvará seja cumprido pelo suporte do núcleo.”","options":["a) Correto","b) Incorreto"],"answer":1,"time":20},
-      {"q":"É correto o uso da expressão: “Certifico que decorreu o prazo legal/concedido em despacho, sem que a parte requerida se manifestasse nos autos.”","options":["a) Correto","b) Incorreto"],"answer":0,"time":20},
-      {"q":"É correto o uso da expressão: “Certifico que deixo de expedir o competente alvará por ter sido apresentada a petição ID XXX, onde o patrono apresenta pedido para pagamento a herdeiros.”","options":["a) Correto","b) Incorreto"],"answer":0,"time":20}
+      {"q":"Exemplo: pergunta?","options":["a","b"],"answer":0,"time":20}
     ];
 
     const POSITIVE=["🎉 Muito bem!","👏 Você mandou bem!","🔥 Excelente!"];
@@ -303,101 +223,34 @@
     const scheduled = {};
 
     // audio players
-    const sharedAudio = new Audio();
-    sharedAudio.loop = true;
-    sharedAudio.volume = 0.7; // default 70%
+    const sharedAudio = new Audio(); sharedAudio.loop = true; sharedAudio.volume = 0.7;
+    const effectCorrect = new Audio(EFFECTS.correct); const effectWrong = new Audio(EFFECTS.wrong); effectCorrect.volume = 0.7; effectWrong.volume = 0.7;
 
-    const effectCorrect = new Audio(EFFECTS.correct);
-    const effectWrong = new Audio(EFFECTS.wrong);
-    effectCorrect.volume = 0.7;
-    effectWrong.volume = 0.7;
-
-    // read persisted settings (mute/volume)
-    const LS_MUTE = 'cj_sound_muted';
-    const LS_VOL  = 'cj_sound_volume';
+    // persisted settings
+    const LS_MUTE = 'cj_sound_muted'; const LS_VOL  = 'cj_sound_volume';
     let isMuted = localStorage.getItem(LS_MUTE) === 'true';
     let localVolume = Number(localStorage.getItem(LS_VOL) || 0.7);
-
-    sharedAudio.volume = localVolume;
-    effectCorrect.volume = localVolume;
-    effectWrong.volume = localVolume;
+    sharedAudio.volume = localVolume; effectCorrect.volume = localVolume; effectWrong.volume = localVolume;
 
     // base elements
-    const cardOrganizer = $('cardOrganizer');
-    const cardPlayer = $('cardPlayer');
-    const stage = $('stage');
-    const leftCard = $('leftCard');
-    const organizerLeaderboard = $('organizerLeaderboard');
-    const musicToast = $('musicToast');
+    const cardOrganizer = $('cardOrganizer'); const cardPlayer = $('cardPlayer'); const stage = $('stage'); const leftCard = $('leftCard'); const organizerLeaderboard = $('organizerLeaderboard'); const musicToast = $('musicToast');
 
-    // create floating sound control (hidden until join/create)
-    const soundDiv = document.createElement('div');
-    soundDiv.className = 'sound-toggle';
-    soundDiv.style.display = 'none';
-    soundDiv.innerHTML = `
-      <button id="soundToggleBtn" title="Ativar / Desativar som">` + (isMuted ? '🔇' : '🔊') + `</button>
-      <input id="volumeRange" class="volume-control" type="range" min="0" max="1" step="0.05" value="${localVolume}">
-    `;
+    // sound UI
+    const soundDiv = document.createElement('div'); soundDiv.className='sound-toggle'; soundDiv.style.display='none';
+    soundDiv.innerHTML = `<button id="soundToggleBtn" title="Ativar / Desativar som">` + (isMuted ? '🔇' : '🔊') + `</button><input id="volumeRange" class="volume-control" type="range" min="0" max="1" step="0.05" value="${localVolume}">`;
     document.body.appendChild(soundDiv);
-
-    const soundToggleBtn = soundDiv.querySelector('#soundToggleBtn');
-    const volumeRange = soundDiv.querySelector('#volumeRange');
-
-    function updateSoundUI(){
-      soundToggleBtn.textContent = isMuted ? '🔇' : '🔊';
-      volumeRange.value = localVolume;
-      sharedAudio.muted = !!isMuted;
-      effectCorrect.muted = !!isMuted;
-      effectWrong.muted = !!isMuted;
-    }
+    const soundToggleBtn = soundDiv.querySelector('#soundToggleBtn'); const volumeRange = soundDiv.querySelector('#volumeRange');
+    function updateSoundUI(){ soundToggleBtn.textContent = isMuted ? '🔇' : '🔊'; volumeRange.value = localVolume; sharedAudio.muted = !!isMuted; effectCorrect.muted = !!isMuted; effectWrong.muted = !!isMuted; }
     updateSoundUI();
-
-    soundToggleBtn.addEventListener('click', ()=>{
-      isMuted = !isMuted;
-      localStorage.setItem(LS_MUTE, isMuted ? 'true' : 'false');
-      updateSoundUI();
-    });
-
-    volumeRange.addEventListener('input', (e)=>{
-      localVolume = Number(e.target.value);
-      sharedAudio.volume = localVolume;
-      effectCorrect.volume = localVolume;
-      effectWrong.volume = localVolume;
-      localStorage.setItem(LS_VOL, String(localVolume));
-    });
+    soundToggleBtn.addEventListener('click', ()=>{ isMuted = !isMuted; localStorage.setItem(LS_MUTE, isMuted ? 'true' : 'false'); updateSoundUI(); });
+    volumeRange.addEventListener('input',(e)=>{ localVolume = Number(e.target.value); sharedAudio.volume = localVolume; effectCorrect.volume = localVolume; effectWrong.volume = localVolume; localStorage.setItem(LS_VOL, String(localVolume)); });
 
     cardOrganizer.addEventListener('click', ()=> openOrganizer());
     cardPlayer.addEventListener('click', ()=> openPlayer());
 
-    function openOrganizer(){
-      stage.style.display = 'grid';
-      leftCard.innerHTML = '';
-      const tpl = document.getElementById('organizerTemplate').content.cloneNode(true);
-      leftCard.appendChild(tpl);
-      bindOrganizer();
-      // show sound UI for organizer
-      soundDiv.style.display = 'flex';
-    }
-
-    function openPlayer(){
-      stage.style.display = 'grid';
-      leftCard.innerHTML = '';
-      const tpl = document.getElementById('playerTemplate').content.cloneNode(true);
-      leftCard.appendChild(tpl);
-      bindPlayer();
-      // sound UI will be shown after join (handled in bindPlayer)
-    }
-
-    function openGameUI(){
-      leftCard.innerHTML = '';
-      const tpl = document.getElementById('gameTemplate').content.cloneNode(true);
-      leftCard.appendChild(tpl);
-      // set player's name
-      if($('youName') && state.name) $('youName').innerText = state.name;
-      // show sound controls during game
-      soundDiv.style.display = 'flex';
-      updateSoundUI();
-    }
+    function openOrganizer(){ stage.style.display='grid'; leftCard.innerHTML=''; const tpl = document.getElementById('organizerTemplate').content.cloneNode(true); leftCard.appendChild(tpl); bindOrganizer(); soundDiv.style.display='flex'; }
+    function openPlayer(){ stage.style.display='grid'; leftCard.innerHTML=''; const tpl = document.getElementById('playerTemplate').content.cloneNode(true); leftCard.appendChild(tpl); bindPlayer(); }
+    function openGameUI(){ leftCard.innerHTML=''; const tpl = document.getElementById('gameTemplate').content.cloneNode(true); leftCard.appendChild(tpl); if($('youName') && state.name) $('youName').innerText = state.name; soundDiv.style.display='flex'; updateSoundUI(); }
 
     // Organizer
     function bindOrganizer(){
@@ -409,14 +262,17 @@
       const prevBtn = leftCard.querySelector('#prevBtn');
       const nextBtn = leftCard.querySelector('#nextBtn');
       const endBtn = leftCard.querySelector('#endBtn');
-      const restartQuizBtn = leftCard.querySelector('#restartQuizBtn');
       const statusLabel = leftCard.querySelector('#statusLabel');
 
+      // Ensure roomName width/alignment (ajuste 1)
+      const roomInput = leftCard.querySelector('#roomName'); roomInput.style.maxWidth = '280px'; roomInput.style.display='block';
+
+      // Ensure button text (ajuste 4)
+      createBtn.textContent = 'Criar Sala';
+
       createBtn.addEventListener('click', async ()=>{
-        // NOTE: 'Seu nome' foi removido do painel do organizador.
-        // Usamos nome fixo "Organizador" conforme solicitado.
-        const name = "Organizador";
-        const room = leftCard.querySelector('#roomName').value.trim().toUpperCase();
+        const name = 'Organizador';
+        const room = roomInput.value.trim().toUpperCase();
         if(!room) return alert('Preencha a sala.');
         state.role='organizer'; state.name=name; state.room=room; state.uid = genUid(name);
 
@@ -427,60 +283,33 @@
         }
 
         await db.ref(`rooms/${room}/meta`).set({ host:name, createdAt: firebase.database.ServerValue.TIMESTAMP });
-        leftCard.querySelector('#quizControls').style.display = 'block';
+        leftCard.querySelector('#quizControls').style.display='block';
         statusLabel.innerText = `Sala ${room} criada/ativa`;
         attachRoom(room);
         alert('Sala pronta!');
 
-        // bind music select initial value from DB
-        db.ref(`rooms/${state.room}/music`).get().then(snap => {
-          const val = snap.val() || '';
-          if(musicSelect) musicSelect.value = val;
-        });
+        // sync music initial
+        db.ref(`rooms/${state.room}/music`).get().then(snap => { const val = snap.val() || ''; if(musicSelect) musicSelect.value = val; });
       });
 
       importBtn.addEventListener('click', ()=> fileInput.click());
       fileInput.addEventListener('change', async (e)=>{
-        const f = e.target.files[0];
-        if(!f) return;
+        const f = e.target.files[0]; if(!f) return;
         try{
-          const arr = await f.arrayBuffer();
-          const wb = XLSX.read(arr, {type:'array'});
-          const wsName = wb.SheetNames[0];
-          const ws = wb.Sheets[wsName];
-          const json = XLSX.utils.sheet_to_json(ws, {defval:''});
-          const parsed = parseQuestionsFromSheet(json);
+          const arr = await f.arrayBuffer(); const wb = XLSX.read(arr,{type:'array'}); const ws = wb.Sheets[wb.SheetNames[0]]; const json = XLSX.utils.sheet_to_json(ws,{defval:''}); const parsed = parseQuestionsFromSheet(json);
           if(!parsed || !parsed.length) return alert('Nenhuma pergunta encontrada no arquivo.');
-          if(!state.room) {
-            const keep = confirm('Você ainda não criou uma sala. Deseja carregar perguntas no banco público temporário local? Recomendado criar sala primeiro.');
-            if(!keep) return;
-          }
+          if(!state.room) { const keep = confirm('Você ainda não criou uma sala. Deseja carregar perguntas no banco público temporário local? Recomendado criar sala primeiro.'); if(!keep) return; }
           await db.ref(`rooms/${state.room}/questions`).set(parsed);
           alert(`Importadas ${parsed.length} perguntas!`);
-        } catch(err){
-          console.error(err);
-          alert('Erro ao processar o arquivo. Verifique o formato.');
-        } finally {
-          fileInput.value = '';
-        }
+        }catch(err){ console.error(err); alert('Erro ao processar o arquivo. Verifique o formato.'); } finally { fileInput.value=''; }
       });
 
-      // music change -> write to DB so players sync
-      musicSelect.addEventListener('change', (e)=>{
-        if(!state.room) return alert('Crie a sala primeiro antes de escolher a música.');
-        const val = e.target.value || '';
-        db.ref(`rooms/${state.room}/music`).set(val);
-        // show toast locally for organizer
-        showMusicToast();
-      });
+      musicSelect.addEventListener('change', (e)=>{ if(!state.room) return alert('Crie a sala primeiro antes de escolher a música.'); const val = e.target.value || ''; db.ref(`rooms/${state.room}/music`).set(val); showMusicToast(); });
 
       startBtn.addEventListener('click', async ()=>{
         if(state.role!=='organizer') return alert('Somente organizador');
-        const qsSnap = await db.ref(`rooms/${state.room}/questions`).get();
-        const qs = qsSnap.val();
-        if(!qs || !qs.length) return alert('Carregue perguntas primeiro.');
-        const first = qs[0];
-        const startAt = Date.now();
+        const qsSnap = await db.ref(`rooms/${state.room}/questions`).get(); const qs = qsSnap.val(); if(!qs || !qs.length) return alert('Carregue perguntas primeiro.');
+        const first = qs[0]; const startAt = Date.now();
         await db.ref(`rooms/${state.room}/current`).set({ index:0, q:first.q, options:first.options, correct:first.answer, time:first.time||20, startAt });
         statusLabel.innerText = `Pergunta 1/${qs.length} ativa`;
         scheduleTally(state.room, 0, startAt, (first.time||20)*1000);
@@ -493,7 +322,7 @@
         const next = qs[cur.index+1]; if(!next) return alert('Fim do quiz');
         const startAt = Date.now();
         await db.ref(`rooms/${state.room}/current`).set({ index:cur.index+1, q:next.q, options:next.options, correct:next.answer, time:next.time||20, startAt });
-        leftCard.querySelector('#statusLabel').innerText = `Pergunta ${cur.index+2}/${qs.length} ativa`;
+        statusLabel.innerText = `Pergunta ${cur.index+2}/${qs.length} ativa`;
         scheduleTally(state.room, cur.index+1, startAt, (next.time||20)*1000);
       });
 
@@ -505,27 +334,18 @@
         const prev = qs[prevIndex]; if(!prev) return alert('Nenhuma anterior');
         const startAt = Date.now();
         await db.ref(`rooms/${state.room}/current`).set({ index:prevIndex, q:prev.q, options:prev.options, correct:prev.answer, time:prev.time||20, startAt });
-        leftCard.querySelector('#statusLabel').innerText = `Pergunta ${prevIndex+1}/${qs.length} ativa`;
+        statusLabel.innerText = `Pergunta ${prevIndex+1}/${qs.length} ativa`;
         scheduleTally(state.room, prevIndex, startAt, (prev.time||20)*1000);
       });
 
-      endBtn.addEventListener('click', async ()=>{
+      // Ajuste 2: ao encerrar, sinaliza final no DB para todos verem
+      const endHandler = async ()=>{
         if(state.role!=='organizer') return;
-        // remove current question so players see "Aguardando"
         await db.ref(`rooms/${state.room}/current`).remove();
-        // show final overlay but keep listeners active (so leaderboard still updates)
-        renderFinalOverlay();
-      });
+        await db.ref(`rooms/${state.room}/meta/final`).set(true);
+      };
+      endBtn.addEventListener('click', endHandler);
 
-      restartQuizBtn.addEventListener('click', async ()=>{
-        if(state.role!=='organizer') return;
-        await db.ref(`rooms/${state.room}/answers`).remove();
-        const playersSnap = await db.ref(`rooms/${state.room}/players`).get();
-        const players = playersSnap.val() || {};
-        for(const uid of Object.keys(players)) await db.ref(`rooms/${state.room}/players/${uid}`).update({ score:0, correctCount:0, answeredCount:0, avgTime:0 });
-        await db.ref(`rooms/${state.room}/tallied`).remove();
-        leftCard.querySelector('#statusLabel').innerText = 'Quiz reiniciado';
-      });
     }
 
     // Player
@@ -544,7 +364,7 @@
       });
     }
 
-    // attach listeners to room (keeps leaderboard live)
+    // attach listeners to room (keeps leaderboard live and shows final)
     function attachRoom(roomId){
       // players / leaderboard
       db.ref(`rooms/${roomId}/players`).on('value', snap=>{
@@ -570,26 +390,20 @@
         }
       });
 
-      // music sync: when music key changes, update audio for all players
+      // music sync
       db.ref(`rooms/${roomId}/music`).on('value', snap=>{
         const key = snap.val() || '';
-        if(!key){ try{ sharedAudio.pause(); sharedAudio.src = ''; }catch(e){} return; }
-        const url = TRACKS[key];
-        if(!url) return;
-        if(sharedAudio.src !== url){
-          sharedAudio.src = url;
-          sharedAudio.loop = true;
-        }
-        // apply mute/volume settings
-        sharedAudio.volume = localVolume;
-        sharedAudio.muted = isMuted;
-        // try to play; mobile browsers may require user gesture — catch errors silently
-        sharedAudio.play().catch(err => {
-          // log only
-          console.log('audio play blocked (gesture required)', err);
-        });
-        // show toast to players too
+        if(!key){ try{ sharedAudio.pause(); sharedAudio.src=''; }catch(e){} return; }
+        const url = TRACKS[key]; if(!url) return;
+        if(sharedAudio.src !== url){ sharedAudio.src = url; sharedAudio.loop = true; }
+        sharedAudio.volume = localVolume; sharedAudio.muted = isMuted;
+        sharedAudio.play().catch(err=>{ console.log('audio play blocked', err); });
         showMusicToast();
+      });
+
+      // final flag -> show final overlay to everyone
+      db.ref(`rooms/${roomId}/meta/final`).on('value', snap=>{
+        const v = snap.val(); if(v) renderFinalOverlay();
       });
     }
 
@@ -597,11 +411,8 @@
     function showQuestion(cur){
       if(localTimer){ clearInterval(localTimer); localTimer = null; }
       const qText = $('questionText'); const opts = $('optionsArea'); const fb = $('feedbackArea');
-      fb.classList.add('hidden');
-      qText.innerText = cur.q || '—';
-      opts.innerHTML = '';
+      fb.classList.add('hidden'); qText.innerText = cur.q || '—'; opts.innerHTML = '';
       $('qIndex').innerText = `Pergunta ${Number(cur.index)+1}`;
-      // ensure player's name is visible on screen
       if($('youName') && state.name) $('youName').innerText = state.name;
 
       (cur.options||[]).forEach((opt,i)=>{
@@ -630,49 +441,27 @@
         if($('timer')) $('timer').innerText = `Tempo: ${remS}s`;
         if(remS <= 0 && localTimer){ clearInterval(localTimer); localTimer = null; }
       }
-      tick();
-      localTimer = setInterval(tick, 200);
+      tick(); localTimer = setInterval(tick, 200);
     }
 
-    function playCorrect(){
-      try{
-        if(!isMuted){ effectCorrect.currentTime = 0; effectCorrect.volume = localVolume; effectCorrect.play().catch(()=>{}); }
-      }catch(e){}
-    }
-    function playWrong(){
-      try{
-        if(!isMuted){ effectWrong.currentTime = 0; effectWrong.volume = localVolume; effectWrong.play().catch(()=>{}); }
-      }catch(e){}
-    }
-
-    function showFeedback(ok){
-      const fb = $('feedbackArea'); fb.classList.remove('hidden','good','bad'); fb.classList.add(ok?'good':'bad'); fb.innerText = ok ? POSITIVE[Math.floor(Math.random()*POSITIVE.length)] : NEGATIVE[Math.floor(Math.random()*NEGATIVE.length)];
-      try{ if(ok) navigator.vibrate && navigator.vibrate([20]); else navigator.vibrate && navigator.vibrate([30,20]); }catch(e){}
-    }
+    function playCorrect(){ try{ if(!isMuted){ effectCorrect.currentTime = 0; effectCorrect.volume = localVolume; effectCorrect.play().catch(()=>{}); } }catch(e){} }
+    function playWrong(){ try{ if(!isMuted){ effectWrong.currentTime = 0; effectWrong.volume = localVolume; effectWrong.play().catch(()=>{}); } }catch(e){} }
+    function showFeedback(ok){ const fb = $('feedbackArea'); fb.classList.remove('hidden','good','bad'); fb.classList.add(ok?'good':'bad'); fb.innerText = ok ? POSITIVE[Math.floor(Math.random()*POSITIVE.length)] : NEGATIVE[Math.floor(Math.random()*NEGATIVE.length)]; try{ navigator.vibrate && navigator.vibrate(ok?[20]:[30,20]); }catch(e){} }
 
     // scheduling tally
-    function scheduleTally(room, index, startAt, totalMs){
-      const key = `${room}::${index}`;
-      if(scheduled[key]) return;
-      scheduled[key] = true;
-      setTimeout(()=> tallyQuestion(room, index, startAt, totalMs), totalMs + 900);
-    }
+    function scheduleTally(room, index, startAt, totalMs){ const key = `${room}::${index}`; if(scheduled[key]) return; scheduled[key] = true; setTimeout(()=> tallyQuestion(room, index, startAt, totalMs), totalMs + 900); }
 
-    // tally
+    // tally: aggregate answers and update players scores
     async function tallyQuestion(room, index, startAt, totalMs){
       try{
         const markRef = db.ref(`rooms/${room}/tallied/${index}`);
-        const mark = await markRef.get();
-        if(mark.exists()) return;
+        const mark = await markRef.get(); if(mark.exists()) return;
 
-        const answersSnap = await db.ref(`rooms/${room}/answers/${index}`).get();
-        const answers = answersSnap.val() || {};
-        const playersSnap = await db.ref(`rooms/${room}/players`).get();
-        const players = playersSnap.val() || {};
+        const answersSnap = await db.ref(`rooms/${room}/answers/${index}`).get(); const answers = answersSnap.val() || {};
+        const playersSnap = await db.ref(`rooms/${room}/players`).get(); const players = playersSnap.val() || {};
 
         for(const uid of Object.keys(answers)){
-          const a = answers[uid];
-          if(!a) continue;
+          const a = answers[uid]; if(!a) continue;
           const elapsed = Math.max(0, Number(a.at || Date.now()) - Number(startAt));
           const within = elapsed <= Number(totalMs);
           const correct = !!a.isCorrect && within;
@@ -684,125 +473,77 @@
           const newCorrect = prevCorrect + (correct ? 1 : 0);
           const prevScore = Number(p.score || 0);
           const newScore = prevScore + (correct ? 10 : 0);
-          const prevAvg = Number(p.avgTime || 0);
-          const prevTotalTime = prevAvg * prevAnswered;
-          const newAvg = Math.round((prevTotalTime + elapsed) / newAnswered);
+          const prevAvg = Number(p.avgTime || 0); // stored in ms
+          const prevTotalTime = prevAvg * prevAnswered; // ms
+          const newAvg = Math.round((prevTotalTime + elapsed) / newAnswered); // ms
 
-          await db.ref(`rooms/${room}/players/${uid}`).update({
-            score: newScore,
-            correctCount: newCorrect,
-            answeredCount: newAnswered,
-            avgTime: newAvg
-          });
+          // write back (keep avgTime in ms for accurate tiebreak)
+          await db.ref(`rooms/${room}/players/${uid}`).update({ score: newScore, correctCount: newCorrect, answeredCount: newAnswered, avgTime: newAvg });
         }
 
         await markRef.set({ talliedAt: firebase.database.ServerValue.TIMESTAMP });
         const freshPlayers = (await db.ref(`rooms/${room}/players`).get()).val() || {};
         renderLeaderboard(freshPlayers);
-      } catch(err){
-        console.error('Erro em tallyQuestion:', err);
-      }
+      } catch(err){ console.error('Erro em tallyQuestion:', err); }
     }
 
-    // render leaderboard
+    // render leaderboard with strict tiebreak rules
+    // Tiebreak order: 1) score desc, 2) correctCount desc, 3) avgTime asc (lower better), 4) answeredCount desc, 5) name asc
     function renderLeaderboard(playersObj){
       const players = playersObj || {};
       const list = Object.keys(players).map(uid => {
         const p = players[uid] || {};
-        return { uid, name: p.name || 'Jogador', score: Number(p.score || 0), correct: Number(p.correctCount || 0), avgTime: Number(p.avgTime || 0) };
-      });
-      list.sort((A,B) => {
-        if(B.score !== A.score) return B.score - A.score;
-        return A.avgTime - B.avgTime;
+        return { uid, name: p.name || 'Jogador', score: Number(p.score || 0), correct: Number(p.correctCount || 0), avgTime: Number(p.avgTime || 0), answered: Number(p.answeredCount || 0) };
       });
 
-      if(list.length === 0){
-        organizerLeaderboard.innerHTML = '<div class="small">Nenhum jogador ainda</div>';
-        return;
-      }
+      list.sort((A,B) => {
+        if(B.score !== A.score) return B.score - A.score; // higher score wins
+        if(B.correct !== A.correct) return B.correct - A.correct; // more correct answers wins
+        const aAvg = A.avgTime === 0 ? Infinity : A.avgTime; const bAvg = B.avgTime === 0 ? Infinity : B.avgTime;
+        if(aAvg !== bAvg) return aAvg - bAvg; // lower avg time wins
+        if(B.answered !== A.answered) return B.answered - A.answered; // more answered wins
+        return A.name.localeCompare(B.name); // fallback alphabetical
+      });
+
+      if(list.length === 0){ organizerLeaderboard.innerHTML = '<div class="small">Nenhum jogador ainda</div>'; return; }
 
       const html = list.map((p,i)=>{
         const medal = i===0?'<div class="medal gold">1</div>':i===1?'<div class="medal silver">2</div>':i===2?'<div class="medal bronze">3</div>':'<div style="width:44px"></div>';
         const avgDisplay = p.avgTime === 0 ? '--' : (p.avgTime/1000).toFixed(1) + 's';
-        return `<div class="lead-item ${i<3?'top':''}" data-uid="${p.uid}">
-          <div style="display:flex;gap:12px;align-items:center">
-            ${medal}
-            <div style="font-weight:800">${escapeHtml(p.name)}</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-weight:800">${p.score} pts</div>
-            <div class="small">${p.correct} acertos — ${avgDisplay}</div>
-          </div>
-        </div>`;
+        return `<div class="lead-item ${i<3?'top':''}" data-uid="${p.uid}"><div style="display:flex;gap:12px;align-items:center">${medal}<div style="font-weight:800">${escapeHtml(p.name)}</div></div><div style="text-align:right"><div style="font-weight:800">${p.score} pts</div><div class="small">${p.correct} acertos — ${avgDisplay}</div></div></div>`;
       }).join('');
       organizerLeaderboard.innerHTML = html;
     }
 
+    // final overlay (adjusted): appears to everyone; only Close button that clears room and returns to start
     async function renderFinalOverlay(){
-      if(!state.room) return;
-      const players = (await db.ref(`rooms/${state.room}/players`).get()).val() || {};
-      const list = Object.keys(players).map(k => players[k]).sort((a,b) => (b.score||0) - (a.score||0));
-      // build overlay
-      const overlay = document.createElement('div');
-      overlay.className = 'final-overlay';
-      overlay.innerHTML = `
-        <div class="final-card">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h2>🏁 Resultado Final — Cenjud Play</h2>
-            <div style="display:flex;gap:8px">
-              <button id="shareBtn" class="btn-primary">📤 Compartilhar Resultado</button>
-              <button id="resetBtn" class="btn-ghost">🔄 Resetar Quiz</button>
-              <button id="closeFinal" class="btn-ghost">Fechar</button>
+      try{
+        if(!state.room) return; if(document.querySelector('.final-overlay')) return;
+        const players = (await db.ref(`rooms/${state.room}/players`).get()).val() || {};
+        const list = Object.values(players).sort((a,b)=> (Number(b.score||0) - Number(a.score||0)) || (Number(b.correctCount||0) - Number(a.correctCount||0)) || ((Number(a.avgTime||0)===0?Infinity:Number(a.avgTime||0)) - (Number(b.avgTime||0)===0?Infinity:Number(b.avgTime||0))) );
+
+        const overlay = document.createElement('div'); overlay.className='final-overlay';
+        overlay.innerHTML = `
+          <div class="final-card">
+            <h2 style="text-align:center">🏁 Resultado Final — Cenjud Play</h2>
+            <div class="final-list">
+              ${list.map((p,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;margin-top:8px;background:#fff"><div style="display:flex;align-items:center;gap:12px"><div class="final-medal">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.'}</div><div style="font-weight:800">${escapeHtml(p.name)}</div></div><div style="text-align:right"><div style="font-weight:800">${p.score || 0} pts</div><div class="small">${(p.correctCount||0)} acertos — ${p.avgTime ? (p.avgTime/1000).toFixed(1)+'s' : '--'}</div></div></div>`).join('')}
+            </div>
+            <div style="text-align:center;margin-top:16px">
+              <button id="closeFinal" class="btn-primary">Fechar</button>
             </div>
           </div>
-          <div class="final-list">
-            ${list.map((p,i)=>`
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;margin-top:8px;background:#fff">
-                <div style="display:flex;align-items:center;gap:12px">
-                  <div class="final-medal">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.'}</div>
-                  <div style="font-weight:800">${escapeHtml(p.name)} </div>
-                </div>
-                <div style="text-align:right">
-                  <div style="font-weight:800">${p.score || 0} pts</div>
-                  <div class="small">${(p.correctCount||0)} acertos — ${p.avgTime ? (p.avgTime/1000).toFixed(1)+'s' : '--'}</div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-      document.body.appendChild(overlay);
+        `;
+        document.body.appendChild(overlay);
 
-      // button handlers
-      $('shareBtn')?.addEventListener('click', ()=>{
-        const txt = list.map((p,i) => `${i+1}. ${p.name} — ${p.score||0} pts`).join('\\n');
-        if(navigator.share){
-          navigator.share({ title: 'Resultado Cenjud Play', text: txt }).catch(()=>{ alert('Compartilhar falhou. Copie o resultado:\\n' + txt); });
-        } else {
-          navigator.clipboard && navigator.clipboard.writeText(txt).then(()=> alert('Resultado copiado para a área de transferência!'), ()=> alert('Não foi possível copiar. Aqui está:\\n'+txt));
-        }
-      });
-
-      $('resetBtn')?.addEventListener('click', async ()=>{
-        if(!confirm('Resetar quiz (zerar pontuações e remover respostas)?')) return;
-        await db.ref(`rooms/${state.room}/answers`).remove();
-        const playersSnap = await db.ref(`rooms/${state.room}/players`).get();
-        const playersObj = playersSnap.val() || {};
-        for(const uid of Object.keys(playersObj)) await db.ref(`rooms/${state.room}/players/${uid}`).update({ score:0, correctCount:0, answeredCount:0, avgTime:0 });
-        await db.ref(`rooms/${state.room}/tallied`).remove();
-        overlay.remove();
-        alert('Quiz resetado');
-      });
-
-      $('closeFinal')?.addEventListener('click', ()=> overlay.remove());
-    }
-
-    // show short toast when music changed
-    function showMusicToast(){
-      try{
-        musicToast.style.display = 'block';
-        setTimeout(()=> { musicToast.style.display = 'none'; }, 2000);
-      }catch(e){}
+        overlay.querySelector('#closeFinal').addEventListener('click', async ()=>{
+          try{
+            // remove entire room to "limpar tudo" e voltar ao início
+            await db.ref(`rooms/${state.room}`).remove();
+          }catch(e){ console.error('Erro ao limpar sala:', e); }
+          location.reload();
+        });
+      }catch(err){ console.error('Erro renderFinalOverlay', err); }
     }
 
     // utilities
@@ -811,46 +552,18 @@
 
     // parse sheet rows into internal question format
     function parseQuestionsFromSheet(rows){
-      const normalized = rows.map(r=>{
-        const nr = {};
-        for(const k of Object.keys(r)){
-          const nk = k.toString().trim().toLowerCase();
-          nr[nk] = r[k];
-        }
-        return nr;
-      });
-
-      const res = [];
+      const normalized = rows.map(r=>{ const nr={}; for(const k of Object.keys(r)){ const nk = k.toString().trim().toLowerCase(); nr[nk]=r[k]; } return nr; });
+      const res=[];
       for(const r of normalized){
-        const q = r['pergunta'] || r['pergunta?'] || r['questão'] || r['questao'] || r['q'] || r['question'];
-        if(!q) continue;
+        const q = r['pergunta'] || r['pergunta?'] || r['questão'] || r['questao'] || r['q'] || r['question']; if(!q) continue;
         const optA = r['opção a'] || r['opcao a'] || r['a'] || r['opcao_a'] || r['opcaoa'];
         const optB = r['opção b'] || r['opcao b'] || r['b'] || r['opcao_b'];
         const optC = r['opção c'] || r['opcao c'] || r['c'] || r['opcao_c'];
         const optD = r['opção d'] || r['opcao d'] || r['d'] || r['opcao_d'];
-        const opts = [];
-        if(optA) opts.push(String(optA));
-        if(optB) opts.push(String(optB));
-        if(optC) opts.push(String(optC));
-        if(optD) opts.push(String(optD));
-        if(opts.length === 0){
-          for(let i=1;i<=6;i++){
-            const candidate = r['opcao '+i] || r['option '+i] || r['option'+i] || r['opcao'+i];
-            if(candidate) opts.push(String(candidate));
-          }
-        }
-        let ans = r['respostacorreta'] || r['resposta'] || r['resposta correta'] || r['resposta_correta'];
-        let answerIndex = 0;
-        if(ans !== undefined && ans !== null && ans !== ''){
-          const s = String(ans).trim();
-          if(/^[0-9]+$/.test(s)) answerIndex = Number(s);
-          else if(/^[a-dA-D]$/.test(s)) {
-            answerIndex = 'ABCD'.indexOf(s.toUpperCase());
-          } else {
-            const idx = opts.findIndex(o => String(o).trim().toLowerCase() === s.toLowerCase());
-            if(idx >= 0) answerIndex = idx;
-          }
-        }
+        const opts=[]; if(optA) opts.push(String(optA)); if(optB) opts.push(String(optB)); if(optC) opts.push(String(optC)); if(optD) opts.push(String(optD));
+        if(opts.length===0){ for(let i=1;i<=6;i++){ const candidate = r['opcao '+i] || r['option '+i] || r['option'+i] || r['opcao'+i]; if(candidate) opts.push(String(candidate)); } }
+        let ans = r['respostacorreta'] || r['resposta'] || r['resposta correta'] || r['resposta_correta']; let answerIndex = 0;
+        if(ans !== undefined && ans !== null && ans !== ''){ const s = String(ans).trim(); if(/^[0-9]+$/.test(s)) answerIndex = Number(s); else if(/^[a-dA-D]$/.test(s)){ answerIndex = 'ABCD'.indexOf(s.toUpperCase()); } else { const idx = opts.findIndex(o => String(o).trim().toLowerCase() === s.toLowerCase()); if(idx >= 0) answerIndex = idx; } }
         const time = Number(r['tempo'] || r['time'] || 20) || 20;
         res.push({ q: String(q), options: opts.length ? opts : ['A','B'], answer: answerIndex, time });
       }
