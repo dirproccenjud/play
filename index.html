@@ -31,10 +31,8 @@
     .stage{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:18px}
     .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 8px 24px rgba(2,6,23,0.08)}
     .input{display:block;width:100%;padding:10px;border-radius:10px;border:1px solid #e8eef9}
-    /* ajuste: limitar largura dos campos e alinhar */
     #playerName,#playerRoom,#roomName{max-width:280px;}
     .small{font-size:13px;color:var(--muted)}
-    /* === Botões Criar Sala e Importar Quiz uniformizados === */
     #createRoomBtn, #importBtn {
       width: 48%;
       height: 46px;
@@ -60,7 +58,6 @@
     .medal.silver{background:linear-gradient(180deg,#e6e6e6,#d5d5d5);color:#444}
     .medal.bronze{background:linear-gradient(180deg,#f7d7c2,#f3b58b);color:#6b3b10}
     .game-hero{display:flex;justify-content:space-between;align-items:center;gap:12px}
-    /* === Caixa de pergunta mais alta e espaçada === */
     .question {
       font-weight:600;
       font-size:18px;
@@ -73,11 +70,9 @@
     }
     .progress{height:10px;background:#eef5ff;border-radius:999px;overflow:hidden;margin-top:10px}
     .progress > span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--accent),#59e0ff);transform-origin:left;transition:width 0.3s linear}
-    /* === Opções mais espaçosas e tipografia equilibrada === */
     .options{display:grid;grid-template-columns:1fr 1fr;gap:16px 14px;margin-top:16px}
     .option-btn{padding:18px;border-radius:12px;border:1px solid #eef4ff;background:linear-gradient(180deg,#fff,#f7fbff);font-weight:600;font-size:16px;cursor:pointer;transition:transform .12s,box-shadow .12s}
     .option-btn:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(3,16,70,0.06)}
-    /* === Alternativas corretas/incorretas suavizadas === */
     .option-btn.correct{background:linear-gradient(90deg,#e7f8ee,#c8f0d3);border-color:#c8f0d3;transform:scale(1.02)}
     .option-btn.wrong{background:linear-gradient(90deg,#fff3f3,#ffe0e0);border-color:#ffe0e0;transform:scale(.98)}
     .feedback{margin-top:12px;padding:10px;border-radius:10px;font-weight:800;text-align:center}
@@ -90,10 +85,19 @@
     .final-medal{font-size:28px;margin-right:12px}
     .final-top{display:flex;gap:14px;align-items:center;justify-content:center;margin-bottom:12px}
     .final-list{margin-top:8px}
+    .final-list { max-height: 360px; overflow-y: auto; padding-right: 10px; }
     .sound-toggle{position:fixed;right:18px;top:18px;z-index:99999;background:linear-gradient(90deg,#fff,#f7fbff);border-radius:12px;padding:10px;border:1px solid #eef4ff;box-shadow:0 8px 26px rgba(2,6,23,0.12);display:flex;gap:8px;align-items:center}
     .sound-toggle button{background:transparent;border:0;cursor:pointer;font-size:18px}
     .volume-control{width:140px}
     .toast-music{position:fixed;right:18px;bottom:18px;background:linear-gradient(90deg,#0b74ff,#00b3ff);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;box-shadow:0 8px 26px rgba(2,6,23,0.18);display:none;z-index:100000}
+    .password-modal{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center;z-index:100001}
+    .password-card{width:380px;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:0 12px 40px rgba(2,6,23,0.28)}
+    /* Ajuste de largura do campo da senha */
+    #organizerPassword {
+      width: 70% !important;
+      margin: 0 auto;
+      display: block;
+    }
     @media(max-width:980px){.stage{grid-template-columns:1fr;} .hero{flex-direction:column;align-items:flex-start;gap:12px}}
   </style>
 </head>
@@ -115,6 +119,18 @@
       </div>
     </div>
 
+    <!-- Password modal for organizer -->
+    <div id="passwordModal" class="password-modal" style="display:none">
+      <div class="password-card">
+        <h3 style="margin:0 0 8px 0">Acesso Organizador</h3>
+        <p class="small" style="margin:0 0 12px 0">Insira a senha para acessar o painel do organizador.</p>
+        <input id="organizerPassword" type="password" class="input" placeholder="Senha">
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+          <button id="cancelPassword" class="btn-ghost">Cancelar</button>
+          <button id="okPassword" class="btn-primary">Entrar</button>
+      
+    </div>
+
     <!-- Templates -->
     <template id="organizerTemplate">
       <div>
@@ -131,12 +147,27 @@
           <option value="">Nenhuma</option><option value="energia">Energia</option><option value="blues">Blues</option><option value="funk">Funk</option><option value="estilo">Estilo</option><option value="corporativo">Corporativo</option><option value="pop">Pop</option><option value="horizonte">Horizonte</option>
         </select>
         <div id="quizControls" style="margin-top:16px;display:none">
-          <div class="host-grid"><div class="status-pill" id="statusLabel">Aguardando</div></div>
+          <div class="host-grid"><div class="status-pill" id="statusLabel">Aguardando</div><div style="text-align:right"><button id="unlockAudioBtn" class="btn-ghost" title="Tentar liberar áudio">Liberar áudio</button></div></div>
+
           <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
             <button id="startBtn" class="btn-primary">Iniciar</button>
             <button id="prevBtn" class="btn-ghost">Anterior</button>
             <button id="nextBtn" class="btn-primary">Próxima</button>
             <button id="endBtn" class="btn-ghost">Encerrar</button>
+          </div>
+
+          <!-- Organizer view: only active question + timer -->
+          <div style="margin-top:16px">
+            <div class="small" style="margin-bottom:8px">Visualização Atual</div>
+            <div id="orgCurrent" style="padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid #eef4ff">
+              <div id="orgQIndex" class="small">Pergunta —</div>
+              <div id="orgQuestionText" class="question">Aguardando...</div>
+              <div class="progress"><span id="orgProgressBar" style="width:100%"></span></div>
+              <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+                <div id="orgTimer" class="small status-pill">Tempo: --s</div>
+                <div class="small" id="orgStatusSmall">—</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -223,8 +254,37 @@
     const scheduled = {};
 
     // audio players
-    const sharedAudio = new Audio(); sharedAudio.loop = true; sharedAudio.volume = 0.7;
-    const effectCorrect = new Audio(EFFECTS.correct); const effectWrong = new Audio(EFFECTS.wrong); effectCorrect.volume = 0.7; effectWrong.volume = 0.7;
+    const sharedAudio = new Audio(); sharedAudio.loop = true; sharedAudio.volume = 0.7; sharedAudio.crossOrigin = 'anonymous';
+    const effectCorrect = new Audio(EFFECTS.correct); const effectWrong = new Audio(EFFECTS.wrong); effectCorrect.volume = 0.7; effectWrong.volume = 0.7; effectCorrect.crossOrigin = 'anonymous'; effectWrong.crossOrigin = 'anonymous';
+
+    // WebAudio context for unlocking / better compatibility with autoplay policies
+    let audioCtx = null;
+    let sharedSource = null;
+    let effectsSourceCorrect = null;
+    let effectsSourceWrong = null;
+
+    function tryUnlockAudio() {
+      try {
+        if(!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          try {
+            sharedSource = audioCtx.createMediaElementSource(sharedAudio);
+            sharedSource.connect(audioCtx.destination);
+            effectsSourceCorrect = audioCtx.createMediaElementSource(effectCorrect);
+            effectsSourceCorrect.connect(audioCtx.destination);
+            effectsSourceWrong = audioCtx.createMediaElementSource(effectWrong);
+            effectsSourceWrong.connect(audioCtx.destination);
+          } catch(e) {
+            console.warn('MediaElementSource may already exist or not available:', e);
+          }
+        }
+        if(audioCtx.state === 'suspended') {
+          audioCtx.resume().then(()=> { showMusicToast(); }).catch(()=>{});
+        }
+      } catch(e) {
+        console.warn('Erro ao tentar desbloquear áudio:', e);
+      }
+    }
 
     // persisted settings
     const LS_MUTE = 'cj_sound_muted'; const LS_VOL  = 'cj_sound_volume';
@@ -245,8 +305,32 @@
     soundToggleBtn.addEventListener('click', ()=>{ isMuted = !isMuted; localStorage.setItem(LS_MUTE, isMuted ? 'true' : 'false'); updateSoundUI(); });
     volumeRange.addEventListener('input',(e)=>{ localVolume = Number(e.target.value); sharedAudio.volume = localVolume; effectCorrect.volume = localVolume; effectWrong.volume = localVolume; localStorage.setItem(LS_VOL, String(localVolume)); });
 
-    cardOrganizer.addEventListener('click', ()=> openOrganizer());
-    cardPlayer.addEventListener('click', ()=> openPlayer());
+    // password modal elements
+    const passwordModal = $('passwordModal'); const organizerPassword = $('organizerPassword'); const okPassword = $('okPassword'); const cancelPassword = $('cancelPassword');
+
+    // wire role buttons (organizer requires password)
+    cardOrganizer.addEventListener('click', ()=> {
+      tryUnlockAudio(); // unlock audio on gesture
+      organizerPassword.value = '';
+      passwordModal.style.display = 'flex';
+      organizerPassword.focus();
+    });
+    cancelPassword.addEventListener('click', ()=> { passwordModal.style.display='none'; });
+    okPassword.addEventListener('click', ()=> {
+      const val = organizerPassword.value.trim();
+      if(val === '2024') {
+        passwordModal.style.display='none';
+        openOrganizer();
+      } else {
+        alert('Senha incorreta.');
+      }
+    });
+    organizerPassword.addEventListener('keydown', (e)=> { if(e.key === 'Enter'){ okPassword.click(); }});
+
+    cardPlayer.addEventListener('click', ()=> {
+      tryUnlockAudio(); // unlock audio for player as well
+      openPlayer();
+    });
 
     function openOrganizer(){ stage.style.display='grid'; leftCard.innerHTML=''; const tpl = document.getElementById('organizerTemplate').content.cloneNode(true); leftCard.appendChild(tpl); bindOrganizer(); soundDiv.style.display='flex'; }
     function openPlayer(){ stage.style.display='grid'; leftCard.innerHTML=''; const tpl = document.getElementById('playerTemplate').content.cloneNode(true); leftCard.appendChild(tpl); bindPlayer(); }
@@ -263,12 +347,24 @@
       const nextBtn = leftCard.querySelector('#nextBtn');
       const endBtn = leftCard.querySelector('#endBtn');
       const statusLabel = leftCard.querySelector('#statusLabel');
+      const orgQuestionText = leftCard.querySelector('#orgQuestionText');
+      const orgQIndex = leftCard.querySelector('#orgQIndex');
+      const orgTimer = leftCard.querySelector('#orgTimer');
+      const orgProgressBar = leftCard.querySelector('#orgProgressBar');
+      const orgStatusSmall = leftCard.querySelector('#orgStatusSmall');
+      const unlockAudioBtn = leftCard.querySelector('#unlockAudioBtn');
 
-      // Ensure roomName width/alignment (ajuste 1)
       const roomInput = leftCard.querySelector('#roomName'); roomInput.style.maxWidth = '280px'; roomInput.style.display='block';
 
-      // Ensure button text (ajuste 4)
-      createBtn.textContent = 'Criar Sala';
+      unlockAudioBtn.addEventListener('click', ()=> {
+        tryUnlockAudio();
+        sharedAudio.volume = localVolume;
+        sharedAudio.muted = isMuted;
+        sharedAudio.play().then(()=> { showMusicToast(); }).catch(err=>{
+          console.warn('play sharedAudio error', err);
+          alert('Não foi possível reproduzir automaticamente. Se estiver em uma chamada (Teams/Zoom), ao compartilhar a tela ative "Incluir áudio do computador".');
+        });
+      });
 
       createBtn.addEventListener('click', async ()=>{
         const name = 'Organizador';
@@ -287,8 +383,6 @@
         statusLabel.innerText = `Sala ${room} criada/ativa`;
         attachRoom(room);
         alert('Sala pronta!');
-
-        // sync music initial
         db.ref(`rooms/${state.room}/music`).get().then(snap => { const val = snap.val() || ''; if(musicSelect) musicSelect.value = val; });
       });
 
@@ -308,6 +402,8 @@
 
       startBtn.addEventListener('click', async ()=>{
         if(state.role!=='organizer') return alert('Somente organizador');
+        tryUnlockAudio();
+
         const qsSnap = await db.ref(`rooms/${state.room}/questions`).get(); const qs = qsSnap.val(); if(!qs || !qs.length) return alert('Carregue perguntas primeiro.');
         const first = qs[0]; const startAt = Date.now();
         await db.ref(`rooms/${state.room}/current`).set({ index:0, q:first.q, options:first.options, correct:first.answer, time:first.time||20, startAt });
@@ -338,14 +434,12 @@
         scheduleTally(state.room, prevIndex, startAt, (prev.time||20)*1000);
       });
 
-      // Ajuste 2: ao encerrar, sinaliza final no DB para todos verem
       const endHandler = async ()=>{
         if(state.role!=='organizer') return;
         await db.ref(`rooms/${state.room}/current`).remove();
         await db.ref(`rooms/${state.room}/meta/final`).set(true);
       };
       endBtn.addEventListener('click', endHandler);
-
     }
 
     // Player
@@ -361,19 +455,18 @@
         ref.onDisconnect().remove();
         attachRoom(room);
         openGameUI();
+        tryUnlockAudio();
       });
     }
 
     // attach listeners to room (keeps leaderboard live and shows final)
     function attachRoom(roomId){
-      // players / leaderboard
       db.ref(`rooms/${roomId}/players`).on('value', snap=>{
         const players = snap.val() || {};
         $('playerCount').innerText = `${Object.keys(players).length} jogadores`;
         renderLeaderboard(players);
       });
 
-      // current question
       db.ref(`rooms/${roomId}/current`).on('value', snap=>{
         const cur = snap.val();
         if(!cur){
@@ -382,26 +475,57 @@
             if($('optionsArea')) $('optionsArea').innerHTML = '';
             if($('timer')) $('timer').innerText = 'Tempo: --s';
           }
+          if(state.role==='organizer'){
+            const orgQ = leftCard.querySelector('#orgQuestionText'); if(orgQ) orgQ.innerText = 'Aguardando...';
+            const orgTimer = leftCard.querySelector('#orgTimer'); if(orgTimer) orgTimer.innerText = 'Tempo: --s';
+            const orgPB = leftCard.querySelector('#orgProgressBar'); if(orgPB) orgPB.style.width = '100%';
+            const orgIdx = leftCard.querySelector('#orgQIndex'); if(orgIdx) orgIdx.innerText = 'Pergunta —';
+            const orgStatusSmall = leftCard.querySelector('#orgStatusSmall'); if(orgStatusSmall) orgStatusSmall.innerText = 'Sem pergunta ativa';
+          }
           return;
         }
         if(state.role==='player'){
           if(!$('questionText')) openGameUI();
           showQuestion(cur);
         }
+        if(state.role==='organizer'){
+          const orgQ = leftCard.querySelector('#orgQuestionText');
+          const orgIdx = leftCard.querySelector('#orgQIndex');
+          const orgTimer = leftCard.querySelector('#orgTimer');
+          const orgPB = leftCard.querySelector('#orgProgressBar');
+          const orgStatusSmall = leftCard.querySelector('#orgStatusSmall');
+          if(orgQ) orgQ.innerText = cur.q || '—';
+          if(orgIdx) orgIdx.innerText = `Pergunta ${Number(cur.index)+1}`;
+          if(orgStatusSmall) orgStatusSmall.innerText = `Tempo total: ${cur.time || 20}s`;
+          if(window._orgLocalTimer) { clearInterval(window._orgLocalTimer); window._orgLocalTimer = null; }
+          const total = Number(cur.time || 20);
+          const startAt = Number(cur.startAt) || Date.now();
+          function tickOrg(){
+            const elapsed = Date.now() - startAt;
+            const remS = Math.max(0, Math.ceil((startAt + total*1000 - Date.now())/1000));
+            const pct = Math.max(0, Math.min(100, Math.round(((total*1000 - elapsed)/(total*1000))*100)));
+            if(orgPB) orgPB.style.width = pct + '%';
+            if(orgTimer) orgTimer.innerText = `Tempo: ${remS}s`;
+            if(remS <= 0 && window._orgLocalTimer){ clearInterval(window._orgLocalTimer); window._orgLocalTimer = null; }
+          }
+          tickOrg(); window._orgLocalTimer = setInterval(tickOrg, 200);
+        }
       });
 
-      // music sync
       db.ref(`rooms/${roomId}/music`).on('value', snap=>{
         const key = snap.val() || '';
         if(!key){ try{ sharedAudio.pause(); sharedAudio.src=''; }catch(e){} return; }
         const url = TRACKS[key]; if(!url) return;
         if(sharedAudio.src !== url){ sharedAudio.src = url; sharedAudio.loop = true; }
         sharedAudio.volume = localVolume; sharedAudio.muted = isMuted;
-        sharedAudio.play().catch(err=>{ console.log('audio play blocked', err); });
+        tryUnlockAudio();
+        sharedAudio.play().then(()=>{ showMusicToast(); }).catch(err=>{
+          console.log('audio play blocked', err);
+          showMusicToast('Clique em 🔊 para ativar o som', 4000);
+        });
         showMusicToast();
       });
 
-      // final flag -> show final overlay to everyone
       db.ref(`rooms/${roomId}/meta/final`).on('value', snap=>{
         const v = snap.val(); if(v) renderFinalOverlay();
       });
@@ -477,7 +601,6 @@
           const prevTotalTime = prevAvg * prevAnswered; // ms
           const newAvg = Math.round((prevTotalTime + elapsed) / newAnswered); // ms
 
-          // write back (keep avgTime in ms for accurate tiebreak)
           await db.ref(`rooms/${room}/players/${uid}`).update({ score: newScore, correctCount: newCorrect, answeredCount: newAnswered, avgTime: newAvg });
         }
 
@@ -488,7 +611,6 @@
     }
 
     // render leaderboard with strict tiebreak rules
-    // Tiebreak order: 1) score desc, 2) correctCount desc, 3) avgTime asc (lower better), 4) answeredCount desc, 5) name asc
     function renderLeaderboard(playersObj){
       const players = playersObj || {};
       const list = Object.keys(players).map(uid => {
@@ -497,12 +619,12 @@
       });
 
       list.sort((A,B) => {
-        if(B.score !== A.score) return B.score - A.score; // higher score wins
-        if(B.correct !== A.correct) return B.correct - A.correct; // more correct answers wins
+        if(B.score !== A.score) return B.score - A.score;
+        if(B.correct !== A.correct) return B.correct - A.correct;
         const aAvg = A.avgTime === 0 ? Infinity : A.avgTime; const bAvg = B.avgTime === 0 ? Infinity : B.avgTime;
-        if(aAvg !== bAvg) return aAvg - bAvg; // lower avg time wins
-        if(B.answered !== A.answered) return B.answered - A.answered; // more answered wins
-        return A.name.localeCompare(B.name); // fallback alphabetical
+        if(aAvg !== bAvg) return aAvg - bAvg;
+        if(B.answered !== A.answered) return B.answered - A.answered;
+        return A.name.localeCompare(B.name);
       });
 
       if(list.length === 0){ organizerLeaderboard.innerHTML = '<div class="small">Nenhum jogador ainda</div>'; return; }
@@ -538,7 +660,6 @@
 
         overlay.querySelector('#closeFinal').addEventListener('click', async ()=>{
           try{
-            // remove entire room to "limpar tudo" e voltar ao início
             await db.ref(`rooms/${state.room}`).remove();
           }catch(e){ console.error('Erro ao limpar sala:', e); }
           location.reload();
@@ -570,8 +691,14 @@
       return res;
     }
 
-    // expose for debug
-    window._drs = { OFFICIAL_QUESTIONS, scheduleTally, tallyQuestion, parseQuestionsFromSheet, TRACKS, EFFECTS };
+    // small helper: show a toast message for music
+    function showMusicToast(msg = '🎵 Trilha ativada', time = 1800){
+      musicToast.innerText = msg;
+      musicToast.style.display = 'block';
+      setTimeout(()=> { musicToast.style.display = 'none'; }, time);
+    }
+
+    window._drs = { OFFICIAL_QUESTIONS, scheduleTally, tallyQuestion, parseQuestionsFromSheet, TRACKS, EFFECTS, tryUnlockAudio };
 
     console.log('Cenjud Play pronto — interface carregada');
   });
